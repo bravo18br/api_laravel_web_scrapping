@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Http\Controllers\AlvoController;
 use App\Models\Alvo;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -15,26 +16,33 @@ class ComparaConteudoJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public Alvo $alvo;
+
     /**
      * Create a new job instance.
      */
-    public function __construct(public Alvo $alvo)
+    public function __construct(Alvo $alvo)
     {
-        //
+        $this->alvo = $alvo;
     }
 
     /**
      * Execute the job.
      */
-    public function handle($alvo): void
+    public function handle(): void
     {
-        $alvoController = new AlvoController;
-        $conteudoOriginal = $alvo->conteudo;
-        $conteudoAtual = $alvoController->geraConteudo($alvo);
-        if ($conteudoOriginal != $conteudoAtual) {
-            Log::info(now() . ' - ' . $alvo->url . ' Alterado.');
-        } else {
-            Log::info(now() . ' - ' . $alvo->url . ' Permanece igual.');
+        try {
+            $alvoController = new AlvoController;
+            $conteudoOriginal = $this->alvo->conteudo;
+            $conteudoAtual = $alvoController->geraConteudo($this->alvo);
+
+            if ($conteudoOriginal != $conteudoAtual) {
+                Log::channel('jobs')->info(now() . ' - ' . $this->alvo->url . ' Alterado.');
+            } else {
+                Log::channel('jobs')->info(now() . ' - ' . $this->alvo->url . ' Permanece igual.');
+            }
+        } catch (Exception $e) {
+            Log::channel('jobs')->error(now() . ' - ' . $this->alvo->url . ' ERRO: ' . $e->getMessage());
         }
     }
 }

@@ -33,7 +33,7 @@ class CompareSites extends Command
             ComparaConteudoJob::dispatch($alvo);
             $mensagem = now().' - Command compara sites '.$alvo->nome.' agendado com sucesso.';
             $this->info($mensagem);
-            Log::info($mensagem);
+            Log::channel('jobs')->info($mensagem);
             sleep(5);
         }
         return 0;
