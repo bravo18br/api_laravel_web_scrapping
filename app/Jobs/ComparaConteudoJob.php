@@ -37,13 +37,13 @@ class ComparaConteudoJob implements ShouldQueue
             $conteudoAtual = $alvoController->geraConteudo($this->alvo);
 
             if ($conteudoOriginal != $conteudoAtual) {
-                Log::channel('jobs')->info($this->alvo->url . ' Alterado.');
+                Log::channel('jobs')->info($this->alvo->nome . ' Alterado.');
                 // CRIAR UM ALARME VIA WHATS
             } else {
-                Log::channel('jobs')->info($this->alvo->url . ' Permanece igual.');
+                Log::channel('jobs')->info($this->alvo->nome . ' Permanece igual.');
             }
         } catch (Exception $e) {
-            Log::channel('jobs')->error($this->alvo->url . ' ERRO: ' . $e->getMessage());
+            Log::channel('jobs')->error($this->alvo->nome . ' ERRO: ' . $e->getMessage());
         }
     }
 }

@@ -31,7 +31,7 @@ class CompareSites extends Command
         $alvos = Alvo::all();
         foreach ($alvos as $alvo) {
             ComparaConteudoJob::dispatch($alvo);
-            $mensagem = 'Command compara sites '.$alvo->nome.' agendado com sucesso.';
+            $mensagem = now().' Command compara sites '.$alvo->nome.' agendado com sucesso.';
             $this->info($mensagem);
             Log::channel('jobs')->info($mensagem);
             sleep(5);
