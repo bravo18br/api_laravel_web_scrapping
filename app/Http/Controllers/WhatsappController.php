@@ -4,10 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Models\Alvo;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 
 class WhatsappController extends Controller
 {
+    public function conexaoWPP(): JsonResponse
+    {
+        try {
+            $tokenWPP = $this->generateWPPToken();
+            return response()->json(['token' => $tokenWPP], 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
     public function geraAlertaWPP(Alvo $alvo, $mensagem)
     {
         try {
