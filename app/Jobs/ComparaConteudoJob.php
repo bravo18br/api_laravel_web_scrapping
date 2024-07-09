@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Http\Controllers\AlvoController;
+use App\Http\Controllers\WhatsappController;
 use App\Models\Alvo;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -37,13 +38,18 @@ class ComparaConteudoJob implements ShouldQueue
             $conteudoAtual = $alvoController->geraConteudo($this->alvo);
 
             if ($conteudoOriginal != $conteudoAtual) {
-                Log::channel('jobs')->info($this->alvo->nome . ' Alterado.');
-                // CRIAR UM ALARME VIA WHATS
+                $mensagem = $this->alvo->nome . ' Alterado.';
+                Log::channel('jobs')->info($mensagem);
+                $alarmeWPP = new WhatsappController;
+                $alarmeWPP->geraAlertaWPP($this->alvo, $mensagem);
             } else {
                 Log::channel('jobs')->info($this->alvo->nome . ' Permanece igual.');
             }
         } catch (Exception $e) {
-            Log::channel('jobs')->error($this->alvo->nome . ' ERRO: ' . $e->getMessage());
+            $mensagem = $this->alvo->nome . ' ERRO: ' . $e->getMessage();
+            Log::channel('jobs')->error($mensagem);
+            $alarmeWPP = new WhatsappController;
+            $alarmeWPP->geraAlertaWPP($this->alvo, $mensagem);
         }
     }
 }
