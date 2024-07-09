@@ -13,6 +13,7 @@ class WhatsappController extends Controller
     {
         try {
             $tokenWPP = $this->generateWPPToken();
+            $this->sendStartSessionRequest($tokenWPP);
             return response()->json(['token' => $tokenWPP], 200);
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
