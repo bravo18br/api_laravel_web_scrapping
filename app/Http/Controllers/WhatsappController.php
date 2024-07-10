@@ -13,7 +13,7 @@ class WhatsappController extends Controller
     {
         try {
             $tokenWPP = $this->generateWPPToken();
-            $this->sendStartSessionRequest($tokenWPP);
+            // $this->sendStartSessionRequest($tokenWPP);
             return response()->json(['token' => $tokenWPP], 200);
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -36,6 +36,7 @@ class WhatsappController extends Controller
         $wpp_token = env('MY_WPP_SECURE_TOKEN');
         $wpp_session = env('MY_WPP_SESSION');
         $url = "{$wpp_server}/api/{$wpp_session}/{$wpp_token}/generate-token";
+        return $url;
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
