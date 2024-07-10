@@ -12,7 +12,7 @@ class WppProxyController extends Controller
         $path = $request->path();
         $query = $request->getQueryString();
         $url = "http://wppconnect:21465/$path" . ($query ? "?$query" : '');
-
+dd ($url);
         $response = Http::withHeaders([
             'Accept' => 'application/json',
             'Content-Type' => 'application/json',
