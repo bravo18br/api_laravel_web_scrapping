@@ -96,14 +96,13 @@ class WppController extends Controller
             $response = Http::withHeaders([
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
-            ])->get($url);
+            ])->post($url);
             if ($response->successful()) {
                 $responseBody = $response->json();
                 $wpp_bearer = 'Bearer ' . $responseBody['token'];
                 return $wpp_bearer;
             } else {
                 Log::channel('jobs')->error("Erro function gerar_bearerWPP: " . $url . $response->status());
-                Log::channel('jobs')->error("RESPONSE: " . $response);
                 return "Erro function gerar_bearerWPP: " . $response->status();
             }
         } catch (Exception $e) {
