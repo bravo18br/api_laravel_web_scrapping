@@ -92,7 +92,7 @@ class WppController extends Controller
             $wpp_server = env('MY_WPP_SERVER');
             $wpp_session = env('MY_WPP_SESSION');
             $wpp_secure_token = env('MY_WPP_SECURE_TOKEN');
-            $url = "{$wpp_server}/api/{$wpp_session}/{$wpp_secure_token}/generate-token";
+            $url = "{$wpp_server}api/{$wpp_session}/{$wpp_secure_token}/generate-token";
             $response = Http::withHeaders([
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
