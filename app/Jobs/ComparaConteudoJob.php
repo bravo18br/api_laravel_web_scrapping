@@ -50,5 +50,6 @@ class ComparaConteudoJob implements ShouldQueue
             $wpp = new WppController();
             $wpp->mensagemWhats($mensagem);
         }
+        sleep(1);
     }
 }
