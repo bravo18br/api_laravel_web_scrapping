@@ -103,6 +103,8 @@ class WppController extends Controller
                 return $wpp_bearer;
             } else {
                 Log::channel('jobs')->error("Erro function gerar_bearerWPP: " . $response->status());
+                Log::channel('jobs')->error('$response->successful(): ' . $response->successful());
+                Log::channel('jobs')->error('$url: ' . $url);
                 return "Erro function gerar_bearerWPP: " . $response->status();
             }
         } catch (Exception $e) {
