@@ -2,46 +2,112 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Exception;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class WppController extends Controller
 {
+    /**
+     * Envia uma mensagem via WhatsApp se o status estiver "Connected".
+     *
+     * @param string $mensagem A mensagem a ser enviada.
+     * @return void|string
+     */
     public function mensagemWhats($mensagem)
     {
-        if ($this->statusWPP() == 'offline') {
-            // tarefa caso WPP esteja off || acionar envio EMAIL
+        if ($this->statusWPP() == 'Disconnected') {
+            // tarefa caso WPP esteja off || acionar envio EMAIL com QRCODE
         }
-        if ($this->statusWPP() == 'online') {
-            // tarefa caso WPP esteja on 
+        if ($this->statusWPP() == 'Connected') {
+            try {
+                $wpp_server = env('MY_WPP_SERVER');
+                $wpp_session = env('MY_WPP_SESSION');
+                $url = "{$wpp_server}/api/{$wpp_session}/send-message";
+                $wpp_bearer = $this->gerar_bearerWPP();
+                $body = [
+                    "phone" => "554184191656",
+                    "isGroup" => false,
+                    "isNewsletter" => false,
+                    "message" => $mensagem,
+                ];
+                $response = Http::withHeaders([
+                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/json',
+                    'Authorization' => $wpp_bearer,
+                ])->withBody(json_encode($body))->post($url);
+                if ($response->successful()) {
+                    Log::channel('jobs')->info('Whats enviado: ' . $mensagem);
+                    return;
+                } else {
+                    Log::channel('jobs')->error("Erro function mensagemWhats: " . $response->status());
+                    return "Erro function mensagemWhats: " . $response->status();
+                }
+            } catch (Exception $e) {
+                Log::channel('jobs')->error("Erro function mensagemWhats: " . $e->getMessage());
+                return "Erro function mensagemWhats: " . $e->getMessage();
+            }
         }
     }
 
+    /**
+     * Verifica o status da conexão do WPP.
+     *
+     * @return string O status da conexão ou uma mensagem de erro.
+     */
     public function statusWPP()
     {
-        // TODO fazer a verificação se o WPPConnect está ativo.
-        return 'offline';
+        try {
+            $wpp_server = env('MY_WPP_SERVER');
+            $wpp_session = env('MY_WPP_SESSION');
+            $url = "{$wpp_server}/api/{$wpp_session}/check-connection-session";
+            $wpp_bearer = $this->gerar_bearerWPP();
+            $response = Http::withHeaders([
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+                'Authorization' => $wpp_bearer,
+            ])->get($url);
+            if ($response->successful()) {
+                $responseBody = $response->json();
+                $wpp_status = $responseBody['message'];
+                return $wpp_status;
+            } else {
+                Log::channel('jobs')->error("Erro function statusWPP: " . $response->status());
+                return "Erro function statusWPP: " . $response->status();
+            }
+        } catch (Exception $e) {
+            Log::channel('jobs')->error("Erro function statusWPP: " . $e->getMessage());
+            return "Erro function statusWPP: " . $e->getMessage();
+        }
     }
 
-    public function api_docs(Request $request)
+    /**
+     * Gera e retorna o token Bearer para a sessão do WPP.
+     *
+     * @return string O token Bearer ou uma mensagem de erro.
+     */
+    private function gerar_bearerWPP()
     {
-        $url = "http://wppconnect:21465/api-docs";
-        $response = Http::withHeaders([
-            'Accept' => 'application/json',
-            'Content-Type' => 'application/json',
-        ])->get($url);
-        return response($response->body(), $response->status())->withHeaders($response->headers());
-    }
-    public function gerar_token(Request $request)
-    {
-        $host = env('MY_WPP_SERVER');
-        $session = env('MY_WPP_SESSION');
-        $token = env('MY_WPP_SECURE_TOKEN');
-        $url = "{$host}/api/{$session}/{$token}/generate-token";
-        $response = Http::withHeaders([
-            'Accept' => 'application/json',
-            'Content-Type' => 'application/json',
-        ])->get($url);
-        return response($response->body(), $response->status())->withHeaders($response->headers());
+        try {
+            $wpp_server = env('MY_WPP_SERVER');
+            $wpp_session = env('MY_WPP_SESSION');
+            $wpp_secure_token = env('MY_WPP_SECURE_TOKEN');
+            $url = "{$wpp_server}/api/{$wpp_session}/{$wpp_secure_token}/generate-token";
+            $response = Http::withHeaders([
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+            ])->get($url);
+            if ($response->successful()) {
+                $responseBody = $response->json();
+                $wpp_bearer = 'Bearer ' . $responseBody['token'];
+                return $wpp_bearer;
+            } else {
+                Log::channel('jobs')->error("Erro function gerar_bearerWPP: " . $response->status());
+                return "Erro function gerar_bearerWPP: " . $response->status();
+            }
+        } catch (Exception $e) {
+            Log::channel('jobs')->error("Erro function gerar_bearerWPP: " . $e->getMessage());
+            return "Erro function gerar_bearerWPP: " . $e->getMessage();
+        }
     }
 }

@@ -36,7 +36,6 @@ class ComparaConteudoJob implements ShouldQueue
             $alvoController = new AlvoController;
             $conteudoOriginal = $this->alvo->conteudo;
             $conteudoAtual = $alvoController->geraConteudo($this->alvo);
-
             if ($conteudoOriginal != $conteudoAtual) {
                 $mensagem = $this->alvo->nome . ' Alterado.';
                 Log::channel('jobs')->info($mensagem);
