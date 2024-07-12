@@ -31,9 +31,6 @@ class WppController extends Controller
     public function mensagemWhats($mensagem)
     {
         $statusWPP = $this->statusWPP();
-
-        Log::channel('jobs')->info('$statusWPP: '.$statusWPP);
-
         switch ($statusWPP['status']) {
             case 'CLOSED':
                 // NESSE STATUS, A SESSION EXISTE, MAS ESTÁ FECHADA. PRECISA GERAR O QRCODE
@@ -178,16 +175,19 @@ class WppController extends Controller
                 'Authorization' => $wpp_bearer,
             ])->get($url);
             if ($response->successful()) {
-                $responseBody = $response->json();
-                $wpp_status = $responseBody['status'];
-                return $wpp_status;
+                $responseJson = $response->json();
+                return $responseJson;
             } else {
-                Log::channel('jobs')->error("Erro function statusWPP: " . $response->status() . " | Corpo: " . $response->body());
-                return "Erro function statusWPP: " . $response->status();
+                return [
+                    'status' => 'ERRO',
+                    'ERRO' => "Erro function statusWPP: " . $response->status()
+                ];
             }
         } catch (Exception $e) {
-            Log::channel('jobs')->error("Erro function statusWPP: " . $e->getMessage());
-            return "Erro function statusWPP: " . $e->getMessage();
+            return [
+                'status' => 'ERRO',
+                'ERRO' => "Erro function statusWPP: " . $e->getMessage()
+            ];
         }
     }
 
