@@ -108,6 +108,7 @@ class WppController extends Controller
                 'Content-Type' => 'application/json',
                 'Authorization' => $wpp_bearer,
             ])->get($url);
+            Log::channel('jobs')->error('$response->successful(): ' . $response->successful());
             if ($response->successful()) {
                 $responseBody = $response->json();
                 $wpp_status = $responseBody['status'];
