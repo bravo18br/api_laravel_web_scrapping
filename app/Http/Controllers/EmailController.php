@@ -33,7 +33,11 @@ class EmailController extends Controller
                 'to' => $destino,
                 'subject' => $titulo,
                 'html' => $html,
+                'headers' => [
+                    'Content-Transfer-Encoding' => 'quoted-printable'
+                ]
             ]);
+            
 
             Log::channel('jobs')->info("Email {$titulo} enviado.");
         } catch (Exception $e) {
