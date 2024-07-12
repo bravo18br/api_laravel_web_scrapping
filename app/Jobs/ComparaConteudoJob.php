@@ -18,13 +18,18 @@ class ComparaConteudoJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public Alvo $alvo;
+    protected $wppController;
 
     /**
      * Create a new job instance.
+     *
+     * @param Alvo $alvo
+     * @param WppController $wppController
      */
-    public function __construct(Alvo $alvo)
+    public function __construct(Alvo $alvo, WppController $wppController)
     {
         $this->alvo = $alvo;
+        $this->wppController = $wppController;
     }
 
     /**
@@ -39,16 +44,14 @@ class ComparaConteudoJob implements ShouldQueue
             if ($conteudoOriginal != $conteudoAtual) {
                 $mensagem = $this->alvo->nome . ' Alterado.';
                 Log::channel('jobs')->info($mensagem);
-                $wpp = new WppController();
-                $wpp->mensagemWhats($mensagem);
+                $this->wppController->mensagemWhats($mensagem);
             } else {
                 Log::channel('jobs')->info($this->alvo->nome . ' Permanece igual.');
             }
         } catch (Exception $e) {
             $mensagem = $this->alvo->nome . ' ERRO: ' . $e->getMessage();
             Log::channel('jobs')->error($mensagem);
-            $wpp = new WppController();
-            $wpp->mensagemWhats($mensagem);
+            $this->wppController->mensagemWhats($mensagem);
         }
         sleep(1);
     }
