@@ -16,12 +16,15 @@ class WppController extends Controller
      */
     public function mensagemWhats($mensagem)
     {
-        if ($this->statusWPP() == 'CLOSED') {
+        $statusWPP = $this->statusWPP();
+        Log::channel('jobs')->info('$statusWPP: ' . $statusWPP);
+
+        if ($statusWPP == 'CLOSED') {
             // tarefa caso WPP esteja off || acionar envio EMAIL com QRCODE
             Log::channel('jobs')->info("ENTROU NO CLOSED STATUSWPP: " . $this->statusWPP());
             $qr_codeWPP = $this->startSessionWPP();
         }
-        if ($this->statusWPP() == 'Connected') {
+        if ($statusWPP == 'Connected') {
             try {
                 $wpp_server = env('MY_WPP_SERVER');
                 $wpp_session = env('MY_WPP_SESSION');
