@@ -68,8 +68,8 @@ class WppController extends Controller
     {
         try {
             $qr_codeWPP = $this->geraQRCodeWPP();
-            $this->emailController->sendMessageEmail($qr_codeWPP);
-            Log::channel('jobs')->info("Gerou QRCode: " . $qr_codeWPP);
+            $this->emailController->sendMessageEmail($qr_codeWPP['qrcode']);
+            Log::channel('jobs')->info("Gerou QRCode: " . $qr_codeWPP['qrcode']);
         } catch (Exception $e) {
             Log::channel('jobs')->error("Erro function handleClosedStatus: " . $e->getMessage());
         }
@@ -141,7 +141,6 @@ class WppController extends Controller
             ])->withBody(json_encode($body))->post($url);
             if ($response->successful()) {
                 $responseJson = $response->json();
-                Log::channel('jobs')->info('Gerado QRCode');
                 return $responseJson;
             } else {
                 return [
