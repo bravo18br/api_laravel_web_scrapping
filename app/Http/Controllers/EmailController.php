@@ -11,6 +11,6 @@ class EmailController extends Controller
     public function sendMessageEmail($mensagem)
     {
         // TODO enviar email 
-        Log::channel('jobs')->info('sendMessageEmail: ' . $mensagem);
+        Log::channel('jobs')->info('Tarefa sendMessageEmail acionada');
     }
 }

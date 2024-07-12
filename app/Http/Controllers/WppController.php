@@ -68,8 +68,8 @@ class WppController extends Controller
     {
         try {
             $qr_codeWPP = $this->geraQRCodeWPP();
-            $this->emailController->sendMessageEmail($qr_codeWPP['qrcode']);
-            Log::channel('jobs')->info("Gerou QRCode: " . $qr_codeWPP['qrcode']);
+            $qr_codeWPP = $qr_codeWPP['qrcode'];
+            $this->emailController->sendMessageEmail($qr_codeWPP);
         } catch (Exception $e) {
             Log::channel('jobs')->error("Erro function handleClosedStatus: " . $e->getMessage());
         }
