@@ -17,41 +17,92 @@ class WppController extends Controller
     public function mensagemWhats($mensagem)
     {
         $statusWPP = $this->statusWPP();
-        Log::channel('jobs')->info('$statusWPP: ' . $statusWPP);
-
-        if ($statusWPP == 'CLOSED') {
-            // tarefa caso WPP esteja off || acionar envio EMAIL com QRCODE
-            Log::channel('jobs')->info("ENTROU NO CLOSED STATUSWPP: " . $this->statusWPP());
-            $qr_codeWPP = $this->startSessionWPP();
-        }
-        if ($statusWPP == 'Connected') {
-            try {
-                $wpp_server = env('MY_WPP_SERVER');
-                $wpp_session = env('MY_WPP_SESSION');
-                $url = "{$wpp_server}/api/{$wpp_session}/send-message";
-                $wpp_bearer = $this->gerar_bearerWPP();
-                $body = [
-                    "phone" => "554184191656",
-                    "isGroup" => false,
-                    "isNewsletter" => false,
-                    "message" => $mensagem,
-                ];
-                $response = Http::withHeaders([
-                    'Accept' => 'application/json',
-                    'Content-Type' => 'application/json',
-                    'Authorization' => $wpp_bearer,
-                ])->withBody(json_encode($body))->post($url);
-                if ($response->successful()) {
-                    Log::channel('jobs')->info('Whats enviado: ' . $mensagem);
-                    return;
+        switch ($statusWPP['status']) {
+            case 'CLOSED':
+                // NESSE STATUS, A SESSION EXISTE, MAS ESTÁ FECHADA. PRECISA GERAR O QRCODE
+                $this->handleClosedStatus();
+                break;
+            case 'QRCODE':
+                // NESSE STATUS, O QRCODE FOI GERADO, MAS AINDA NÃO FOI LIDO/AUTORIZADO NO APARELHO
+                $qrCode = $statusWPP['qrcode'];
+                $emailController = new EmailController;
+                $emailController->sendMessageEmail($qrCode);
+                break;
+            case 'CONNECTED':
+                // NESSE STATUS, O SISTEMA ESTÁ PRONTO PARA ENVIAR MENSAGENS
+                $resultado = $this->sendMessageWPP($mensagem);
+                if ($resultado['status'] == 'SUCESSO') {
+                    Log::channel('jobs')->info($resultado['mensagem']);
                 } else {
-                    Log::channel('jobs')->error("Erro function mensagemWhats: " . $response->status());
-                    return "Erro function mensagemWhats: " . $response->status();
+                    Log::channel('jobs')->error($resultado['mensagem']);
                 }
-            } catch (Exception $e) {
-                Log::channel('jobs')->error("Erro function mensagemWhats: " . $e->getMessage());
-                return "Erro function mensagemWhats: " . $e->getMessage();
+                break;
+            case 'ERRO':
+                // NESSE STATUS, EXISTE ALGUM ERRO, ENVIA PARA LOG
+                $mensagem = $statusWPP['ERRO'];
+                Log::channel('jobs')->error($mensagem);
+                break;
+            default:
+                Log::channel('jobs')->error('Status desconhecido (função mensagemWhats): ' . $statusWPP);
+                break;
+        }
+    }
+
+    /**
+     * Manipula o status "CLOSED".
+     */
+    private function handleClosedStatus()
+    {
+        try {
+            $qr_codeWPP = $this->geraQRCodeWPP();
+            $emailController = new EmailController;
+            $emailController->sendMessageEmail($qr_codeWPP);
+            Log::channel('jobs')->info("Gerou  QRCode: " . $qr_codeWPP);
+        } catch (Exception $e) {
+            Log::channel('jobs')->error("Erro function handleClosedStatus: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Envia uma mensagem via WhatsApp.
+     *
+     * @param string $mensagem A mensagem a ser enviada.
+     * @return void|string
+     */
+    private function sendMessageWPP($mensagem)
+    {
+        try {
+            $wpp_server = env('MY_WPP_SERVER');
+            $wpp_session = env('MY_WPP_SESSION');
+            $url = "{$wpp_server}/api/{$wpp_session}/send-message";
+            $wpp_bearer = $this->gerar_bearerWPP();
+            $body = [
+                "phone" => "554184191656",
+                "isGroup" => false,
+                "isNewsletter" => false,
+                "message" => $mensagem,
+            ];
+            $response = Http::withHeaders([
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+                'Authorization' => $wpp_bearer,
+            ])->withBody(json_encode($body))->post($url);
+            if ($response->successful()) {
+                return [
+                    'status' => 'SUCESSO',
+                    'mensagem' => 'Whats enviado: ' . $mensagem
+                ];
+            } else {
+                return [
+                    'status' => 'ERRO',
+                    'mensagem' => "Erro function sendMessageWPP: " . $response->status()
+                ];
             }
+        } catch (Exception $e) {
+            return [
+                'status' => 'ERRO',
+                'mensagem' => "Erro function sendMessageWPP: " . $e->getMessage()
+            ];
         }
     }
 
@@ -60,7 +111,7 @@ class WppController extends Controller
      *
      * @return string|void O QRCode da nova sessão ou uma mensagem de erro.
      */
-    private function startSessionWPP()
+    private function geraQRCodeWPP()
     {
         try {
             $wpp_server = env('MY_WPP_SERVER');
@@ -77,17 +128,20 @@ class WppController extends Controller
                 'Authorization' => $wpp_bearer,
             ])->withBody(json_encode($body))->post($url);
             if ($response->successful()) {
-                $responseBody = $response->json();
-                $qr_codeWPP = $responseBody['qrcode'];
+                $responseJson = $response->json();
                 Log::channel('jobs')->info('Gerado QRCode');
-                return $qr_codeWPP;
+                return $responseJson;
             } else {
-                Log::channel('jobs')->error("Erro function startSessionWPP: " . $response->status());
-                return "Erro function startSessionWPP: " . $response->status();
+                return [
+                    'qrcode' => 'ERRO',
+                    'ERRO' => "Erro function geraQRCodeWPP: " . $response->status()
+                ];
             }
         } catch (Exception $e) {
-            Log::channel('jobs')->error("Erro function startSessionWPP: " . $e->getMessage());
-            return "Erro function startSessionWPP: " . $e->getMessage();
+            return [
+                'qrcode' => 'ERRO',
+                'ERRO' => "Erro function geraQRCodeWPP: " . $e->getMessage()
+            ];
         }
     }
 
@@ -101,14 +155,13 @@ class WppController extends Controller
         try {
             $wpp_server = env('MY_WPP_SERVER');
             $wpp_session = env('MY_WPP_SESSION');
-            $url = "{$wpp_server}api/{$wpp_session}/status-session";
+            $url = "{$wpp_server}/api/{$wpp_session}/status-session";
             $wpp_bearer = $this->gerar_bearerWPP();
             $response = Http::withHeaders([
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
                 'Authorization' => $wpp_bearer,
             ])->get($url);
-            Log::channel('jobs')->info('$response->successful(): ' . $response->successful());
             if ($response->successful()) {
                 $responseBody = $response->json();
                 $wpp_status = $responseBody['status'];
@@ -134,7 +187,7 @@ class WppController extends Controller
             $wpp_server = env('MY_WPP_SERVER');
             $wpp_session = env('MY_WPP_SESSION');
             $wpp_secure_token = env('MY_WPP_SECURE_TOKEN');
-            $url = "{$wpp_server}api/{$wpp_session}/{$wpp_secure_token}/generate-token";
+            $url = "{$wpp_server}/api/{$wpp_session}/{$wpp_secure_token}/generate-token";
             $response = Http::withHeaders([
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
