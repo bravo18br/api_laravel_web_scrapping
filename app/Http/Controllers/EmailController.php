@@ -24,6 +24,11 @@ class EmailController extends Controller
             // Seleciona o template baseado no conteúdo da mensagem
             $template = $this->isBase64($mensagem) ? 'emails.qrcode' : 'emails.mensagem';
 
+            // Se for base64, limpa caracteres de formatação extra
+            if ($this->isBase64($mensagem)) {
+                $mensagem = preg_replace('/[\r\n]+/', '', $mensagem);
+            }
+
             // Gera o HTML usando o template Blade
             $html = View::make($template, compact('titulo', 'mensagem'))->render();
 
