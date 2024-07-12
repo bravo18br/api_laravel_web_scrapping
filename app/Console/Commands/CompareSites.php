@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Jobs\ComparaConteudoJob;
 use App\Models\Alvo;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
 
 class CompareSites extends Command
 {
