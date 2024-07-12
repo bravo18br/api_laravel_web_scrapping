@@ -39,7 +39,7 @@ class WppController extends Controller
             case 'QRCODE':
                 // NESSE STATUS, O QRCODE FOI GERADO, MAS AINDA NÃO FOI LIDO/AUTORIZADO NO APARELHO
                 $mensagem = $statusWPP['qrcode'];
-                $titulo = 'QR Code - Monitora Sites';
+                $titulo = 'QR Code WPP - Monitora Sites';
                 $destino = 'bravo18br@gmail.com';
                 $origem = 'Admin <onboarding@resend.dev>';
                 $this->emailController->sendMessageEmail($titulo, $mensagem, $origem, $destino);
@@ -72,7 +72,7 @@ class WppController extends Controller
         try {
             $qr_codeWPP = $this->geraQRCodeWPP();
             $mensagem = $qr_codeWPP['qrcode'];
-            $titulo = 'QR Code - Monitora Sites';
+            $titulo = 'QR Code WPP - Monitora Sites';
             $destino = 'bravo18br@gmail.com';
             $origem = 'Admin <onboarding@resend.dev>';
             $this->emailController->sendMessageEmail($titulo, $mensagem, $origem, $destino);
