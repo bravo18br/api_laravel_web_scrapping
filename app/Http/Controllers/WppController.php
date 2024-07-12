@@ -16,8 +16,10 @@ class WppController extends Controller
      */
     public function mensagemWhats($mensagem)
     {
-        if ($this->statusWPP() == 'Disconnected') {
+        if ($this->statusWPP() == 'CLOSED') {
             // tarefa caso WPP esteja off || acionar envio EMAIL com QRCODE
+            Log::channel('jobs')->info("ENTROU NO CLOSED STATUSWPP: " . $this->statusWPP());
+            $qr_codeWPP = $this->startSessionWPP();
         }
         if ($this->statusWPP() == 'Connected') {
             try {
@@ -51,16 +53,52 @@ class WppController extends Controller
     }
 
     /**
-     * Verifica o status da conexão do WPP.
+     * Inicia uma nova sessão do WhatsApp e retorna o QRCode.
      *
-     * @return string O status da conexão ou uma mensagem de erro.
+     * @return string|void O QRCode da nova sessão ou uma mensagem de erro.
      */
-    public function statusWPP()
+    private function startSessionWPP()
     {
         try {
             $wpp_server = env('MY_WPP_SERVER');
             $wpp_session = env('MY_WPP_SESSION');
-            $url = "{$wpp_server}/api/{$wpp_session}/check-connection-session";
+            $url = "{$wpp_server}/api/{$wpp_session}/start-session";
+            $wpp_bearer = $this->gerar_bearerWPP();
+            $body = [
+                "webhook" => "", // esse endpoint possui um webhook, talvez seja interessante avaliar a utilização
+                "waitQrCode" => true,
+            ];
+            $response = Http::withHeaders([
+                'Accept' => '*/*',
+                'Content-Type' => 'application/json',
+                'Authorization' => $wpp_bearer,
+            ])->withBody(json_encode($body))->post($url);
+            if ($response->successful()) {
+                $responseBody = $response->json();
+                $qr_codeWPP = $responseBody['qrcode'];
+                Log::channel('jobs')->info('Gerado QRCode');
+                return $qr_codeWPP;
+            } else {
+                Log::channel('jobs')->error("Erro function startSessionWPP: " . $response->status());
+                return "Erro function startSessionWPP: " . $response->status();
+            }
+        } catch (Exception $e) {
+            Log::channel('jobs')->error("Erro function startSessionWPP: " . $e->getMessage());
+            return "Erro function startSessionWPP: " . $e->getMessage();
+        }
+    }
+
+    /**
+     * Verifica o status da conexão do WPP.
+     *
+     * @return string O status da conexão ou uma mensagem de erro.
+     */
+    private function statusWPP()
+    {
+        try {
+            $wpp_server = env('MY_WPP_SERVER');
+            $wpp_session = env('MY_WPP_SESSION');
+            $url = "{$wpp_server}/api/{$wpp_session}/status-session";
             $wpp_bearer = $this->gerar_bearerWPP();
             $response = Http::withHeaders([
                 'Accept' => 'application/json',
@@ -69,7 +107,7 @@ class WppController extends Controller
             ])->get($url);
             if ($response->successful()) {
                 $responseBody = $response->json();
-                $wpp_status = $responseBody['message'];
+                $wpp_status = $responseBody['status'];
                 return $wpp_status;
             } else {
                 Log::channel('jobs')->error("Erro function statusWPP: " . $response->status());
