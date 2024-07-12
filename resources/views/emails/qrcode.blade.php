@@ -8,7 +8,7 @@
 </head>
 
 <body>
-    <p>{{ $mensagem }}</p>
+    <p><img src="data:image/png;base64,{{ $mensagem }}" alt="QR Code"></p>
 </body>
 
 </html>

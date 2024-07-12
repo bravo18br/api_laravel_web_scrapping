@@ -21,17 +21,34 @@ class EmailController extends Controller
     public function sendMessageEmail($titulo, $mensagem, $origem, $destino)
     {
         try {
-            // Gerar HTML a partir do template Blade
-            $html = View::make('emails.mensagem', compact('titulo', 'mensagem'))->render();
+            // Seleciona o template baseado no conteúdo da mensagem
+            $template = $this->isBase64($mensagem) ? 'emails.qrcode' : 'emails.mensagem';
+
+            // Gera o HTML usando o template Blade
+            $html = View::make($template, compact('titulo', 'mensagem'))->render();
+
+            // Envia o email usando a biblioteca Resend
             Resend::emails()->send([
                 'from' => $origem,
                 'to' => $destino,
                 'subject' => $titulo,
                 'html' => $html,
             ]);
+
             Log::channel('jobs')->info("Email {$titulo} enviado.");
         } catch (Exception $e) {
-            Log::channel('jobs')->error("Erro ao enviar email {$titulo}. Erro: ".$e->getMessage());
+            Log::channel('jobs')->error("Erro ao enviar email {$titulo}. Erro: " . $e->getMessage());
         }
+    }
+
+    /**
+     * Verifica se uma string é uma base64 válida.
+     *
+     * @param string $string A string a ser verificada.
+     * @return bool
+     */
+    private function isBase64($string)
+    {
+        return (bool) preg_match('/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', $string);
     }
 }
