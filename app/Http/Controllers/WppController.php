@@ -108,13 +108,13 @@ class WppController extends Controller
                 'Content-Type' => 'application/json',
                 'Authorization' => $wpp_bearer,
             ])->get($url);
-            Log::channel('jobs')->error('$response->successful(): ' . $response->successful());
+            Log::channel('jobs')->info('$response->successful(): ' . $response->successful());
             if ($response->successful()) {
                 $responseBody = $response->json();
                 $wpp_status = $responseBody['status'];
                 return $wpp_status;
             } else {
-                Log::channel('jobs')->error("Erro function statusWPP: " . $response->status());
+                Log::channel('jobs')->error("Erro function statusWPP: " . $response->status() . " | Corpo: " . $response->body());
                 return "Erro function statusWPP: " . $response->status();
             }
         } catch (Exception $e) {
@@ -144,7 +144,7 @@ class WppController extends Controller
                 $wpp_bearer = 'Bearer ' . $responseBody['token'];
                 return $wpp_bearer;
             } else {
-                Log::channel('jobs')->error("Erro function gerar_bearerWPP: " . $url . $response->status());
+                Log::channel('jobs')->error("Erro function gerar_bearerWPP: " . $url . $response->status() . " | Corpo: " . $response->body());
                 return "Erro function gerar_bearerWPP: " . $response->status();
             }
         } catch (Exception $e) {
