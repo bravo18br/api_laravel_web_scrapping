@@ -31,7 +31,7 @@ class EmailController extends Controller
             ]);
             Log::channel('jobs')->info("Email {$titulo} enviado.");
         } catch (Exception $e) {
-            Log::channel('jobs')->error("Erro ao enviar email {$titulo}. Não enviado.");
+            Log::channel('jobs')->error("Erro ao enviar email {$titulo}. Erro: ".$e->getMessage());
         }
     }
 }
