@@ -38,8 +38,11 @@ class WppController extends Controller
                 break;
             case 'QRCODE':
                 // NESSE STATUS, O QRCODE FOI GERADO, MAS AINDA NÃO FOI LIDO/AUTORIZADO NO APARELHO
-                $qrCode = $statusWPP['qrcode'];
-                $this->emailController->sendMessageEmail($qrCode);
+                $mensagem = $statusWPP['qrcode'];
+                $titulo = 'QR Code - Monitora Sites';
+                $destino = 'bravo18br@gmail.com';
+                $origem = 'Admin <monitora_sites@email.com>';
+                $this->emailController->sendMessageEmail($titulo, $mensagem, $origem, $destino);
                 break;
             case 'CONNECTED':
                 // NESSE STATUS, O SISTEMA ESTÁ PRONTO PARA ENVIAR MENSAGENS
@@ -68,8 +71,11 @@ class WppController extends Controller
     {
         try {
             $qr_codeWPP = $this->geraQRCodeWPP();
-            $qr_codeWPP = $qr_codeWPP['qrcode'];
-            $this->emailController->sendMessageEmail($qr_codeWPP);
+            $mensagem = $qr_codeWPP['qrcode'];
+            $titulo = 'QR Code - Monitora Sites';
+            $destino = 'bravo18br@gmail.com';
+            $origem = 'Admin <monitora_sites@email.com>';
+            $this->emailController->sendMessageEmail($titulo, $mensagem, $origem, $destino);
         } catch (Exception $e) {
             Log::channel('jobs')->error("Erro function handleClosedStatus: " . $e->getMessage());
         }
