@@ -41,7 +41,7 @@ class WppController extends Controller
                 $mensagem = $statusWPP['qrcode'];
                 $titulo = 'QR Code - Monitora Sites';
                 $destino = 'bravo18br@gmail.com';
-                $origem = 'Admin <monitora_sites@email.com>';
+                $origem = 'Admin <onboarding@resend.dev>';
                 $this->emailController->sendMessageEmail($titulo, $mensagem, $origem, $destino);
                 break;
             case 'CONNECTED':
@@ -74,7 +74,7 @@ class WppController extends Controller
             $mensagem = $qr_codeWPP['qrcode'];
             $titulo = 'QR Code - Monitora Sites';
             $destino = 'bravo18br@gmail.com';
-            $origem = 'Admin <monitora_sites@email.com>';
+            $origem = 'Admin <onboarding@resend.dev>';
             $this->emailController->sendMessageEmail($titulo, $mensagem, $origem, $destino);
         } catch (Exception $e) {
             Log::channel('jobs')->error("Erro function handleClosedStatus: " . $e->getMessage());
