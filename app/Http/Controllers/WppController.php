@@ -9,6 +9,20 @@ use Illuminate\Support\Facades\Log;
 class WppController extends Controller
 {
     /**
+     * @var EmailController
+     */
+    protected $emailController;
+
+    /**
+     * Cria uma nova instância do WppController.
+     *
+     * @param EmailController $emailController Instância do EmailController para envio de emails.
+     */
+    public function __construct(EmailController $emailController)
+    {
+        $this->emailController = $emailController;
+    }
+    /**
      * Envia uma mensagem via WhatsApp se o status estiver "Connected".
      *
      * @param string $mensagem A mensagem a ser enviada.
@@ -17,6 +31,9 @@ class WppController extends Controller
     public function mensagemWhats($mensagem)
     {
         $statusWPP = $this->statusWPP();
+
+        Log::channel('jobs')->info('$statusWPP: '.$statusWPP);
+
         switch ($statusWPP['status']) {
             case 'CLOSED':
                 // NESSE STATUS, A SESSION EXISTE, MAS ESTÁ FECHADA. PRECISA GERAR O QRCODE
@@ -25,8 +42,7 @@ class WppController extends Controller
             case 'QRCODE':
                 // NESSE STATUS, O QRCODE FOI GERADO, MAS AINDA NÃO FOI LIDO/AUTORIZADO NO APARELHO
                 $qrCode = $statusWPP['qrcode'];
-                $emailController = new EmailController;
-                $emailController->sendMessageEmail($qrCode);
+                $this->emailController->sendMessageEmail($qrCode);
                 break;
             case 'CONNECTED':
                 // NESSE STATUS, O SISTEMA ESTÁ PRONTO PARA ENVIAR MENSAGENS
@@ -55,9 +71,8 @@ class WppController extends Controller
     {
         try {
             $qr_codeWPP = $this->geraQRCodeWPP();
-            $emailController = new EmailController;
-            $emailController->sendMessageEmail($qr_codeWPP);
-            Log::channel('jobs')->info("Gerou  QRCode: " . $qr_codeWPP);
+            $this->emailController->sendMessageEmail($qr_codeWPP);
+            Log::channel('jobs')->info("Gerou QRCode: " . $qr_codeWPP);
         } catch (Exception $e) {
             Log::channel('jobs')->error("Erro function handleClosedStatus: " . $e->getMessage());
         }
