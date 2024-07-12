@@ -101,7 +101,7 @@ class WppController extends Controller
         try {
             $wpp_server = env('MY_WPP_SERVER');
             $wpp_session = env('MY_WPP_SESSION');
-            $url = "{$wpp_server}/api/{$wpp_session}/status-session";
+            $url = "{$wpp_server}api/{$wpp_session}/status-session";
             $wpp_bearer = $this->gerar_bearerWPP();
             $response = Http::withHeaders([
                 'Accept' => 'application/json',
