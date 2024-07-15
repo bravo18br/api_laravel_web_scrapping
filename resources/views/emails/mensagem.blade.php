@@ -7,6 +7,6 @@
     <h1>Notificação: </h1>
     <p>{{ $mensagem }}</p>
     <h1>WPPConnect Status: </h1>
-    <img src="data:image/png;base64,{{ $qrcode }}" alt="QR Code">
+    <!-- <img src="data:image/png;base64,{{ $qrcode }}" alt="QR Code"> -->
 </body>
 </html>
