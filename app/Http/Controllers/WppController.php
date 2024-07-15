@@ -2,51 +2,47 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\GMailController;
 use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class WppController extends Controller
 {
-    /**
-     * @var EmailController
-     */
-    protected $emailController;
-
-    /**
-     * Cria uma nova instância do WppController.
-     *
-     * @param EmailController $emailController Instância do EmailController para envio de emails.
-     */
-    public function __construct(EmailController $emailController)
+    public function __construct()
     {
-        $this->emailController = $emailController;
+        //
     }
+
     /**
      * Envia uma mensagem via WhatsApp se o status estiver "Connected".
      *
      * @param string $mensagem A mensagem a ser enviada.
      * @return void|string
      */
-    public function mensagemWhats($mensagem)
+    public function mensagemWhats($alvo)
     {
         $statusWPP = $this->statusWPP();
         switch ($statusWPP['status']) {
             case 'CLOSED':
                 // NESSE STATUS, A SESSION EXISTE, MAS ESTÁ FECHADA. PRECISA GERAR O QRCODE
-                $this->handleClosedStatus();
+                $this->handleClosedStatus($alvo);
                 break;
             case 'QRCODE':
                 // NESSE STATUS, O QRCODE FOI GERADO, MAS AINDA NÃO FOI LIDO/AUTORIZADO NO APARELHO
-                $mensagem = $statusWPP['qrcode'];
-                $titulo = 'QR Code WPP - Monitora Sites';
-                $destino = 'bravo18br@gmail.com';
-                $origem = 'Admin <onboarding@resend.dev>';
-                $this->emailController->sendMessageEmail($titulo, $mensagem, $origem, $destino);
+                $email = [
+                    'mensagem' => 'Site ' . $alvo->nome . ' alterado.' . PHP_EOL . 'URL: ' . $alvo->url,
+                    'titulo' => 'QR Code WPP - Monitora Sites',
+                    'destino' => 'bravo18br@gmail.com',
+                    'layout' => 'emails.qrcode',
+                    'qrcode' => $statusWPP['qrcode'],
+                ];
+                Mail::send(new GMailController($email));
                 break;
             case 'CONNECTED':
                 // NESSE STATUS, O SISTEMA ESTÁ PRONTO PARA ENVIAR MENSAGENS
-                $resultado = $this->sendMessageWPP($mensagem);
+                $resultado = $this->sendMessageWPP('Site ' . $alvo->nome . ' alterado.' . PHP_EOL . 'URL: ' . $alvo->url);
                 if ($resultado['status'] == 'SUCESSO') {
                     Log::channel('jobs')->info($resultado['mensagem']);
                 } else {
@@ -67,15 +63,18 @@ class WppController extends Controller
     /**
      * Manipula o status "CLOSED".
      */
-    private function handleClosedStatus()
+    private function handleClosedStatus($alvo)
     {
         try {
             $qr_codeWPP = $this->geraQRCodeWPP();
-            $mensagem = $qr_codeWPP['qrcode'];
-            $titulo = 'QR Code WPP - Monitora Sites';
-            $destino = 'bravo18br@gmail.com';
-            $origem = 'Admin <onboarding@resend.dev>';
-            $this->emailController->sendMessageEmail($titulo, $mensagem, $origem, $destino);
+            $email = [
+                'mensagem' => 'Site ' . $alvo->nome . ' alterado.' . PHP_EOL . 'URL: ' . $alvo->url,
+                'titulo' => 'QR Code WPP - Monitora Sites',
+                'destino' => 'bravo18br@gmail.com',
+                'layout' => 'emails.qrcode',
+                'qrcode' => $qr_codeWPP['qrcode'],
+            ];
+            Mail::send(new GMailController($email));
         } catch (Exception $e) {
             Log::channel('jobs')->error("Erro function handleClosedStatus: " . $e->getMessage());
         }
@@ -104,7 +103,7 @@ class WppController extends Controller
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
                 'Authorization' => $wpp_bearer,
-            ])->withBody(json_encode($body))->post($url);
+            ])->withBody(json_encode($body), 'application/json')->post($url);
             if ($response->successful()) {
                 return [
                     'status' => 'SUCESSO',
@@ -144,7 +143,7 @@ class WppController extends Controller
                 'Accept' => '*/*',
                 'Content-Type' => 'application/json',
                 'Authorization' => $wpp_bearer,
-            ])->withBody(json_encode($body))->post($url);
+            ])->withBody(json_encode($body), 'application/json')->post($url);
             if ($response->successful()) {
                 $responseJson = $response->json();
                 return $responseJson;
