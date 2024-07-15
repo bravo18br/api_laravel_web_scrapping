@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\GMailController;
 use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 class WppController extends Controller
 {
@@ -26,57 +24,17 @@ class WppController extends Controller
         $statusWPP = $this->statusWPP();
         switch ($statusWPP['status']) {
             case 'CLOSED':
-                // NESSE STATUS, A SESSION EXISTE, MAS ESTÁ FECHADA. PRECISA GERAR O QRCODE
-                $this->handleClosedStatus($alvo);
-                break;
             case 'QRCODE':
-                // NESSE STATUS, O QRCODE FOI GERADO, MAS AINDA NÃO FOI LIDO/AUTORIZADO NO APARELHO
-                $email = [
-                    'mensagem' => 'Site ' . $alvo->nome . ' alterado.' . PHP_EOL . 'URL: ' . $alvo->url,
-                    'titulo' => 'QR Code WPP - Monitora Sites',
-                    'destino' => 'bravo18br@gmail.com',
-                    'layout' => 'emails.qrcode',
-                    'qrcode' => $statusWPP['qrcode'],
-                ];
-                Mail::send(new GMailController($email));
+                return $this->geraQRCodeWPP();
                 break;
             case 'CONNECTED':
-                // NESSE STATUS, O SISTEMA ESTÁ PRONTO PARA ENVIAR MENSAGENS
-                $resultado = $this->sendMessageWPP('Site ' . $alvo->nome . ' alterado.' . PHP_EOL . 'URL: ' . $alvo->url);
-                if ($resultado['status'] == 'SUCESSO') {
-                    Log::channel('jobs')->info($resultado['mensagem']);
-                } else {
-                    Log::channel('jobs')->error($resultado['mensagem']);
-                }
-                break;
-            case 'ERRO':
-                // NESSE STATUS, EXISTE ALGUM ERRO, ENVIA PARA LOG
-                $mensagem = $statusWPP['ERRO'];
-                Log::channel('jobs')->error($mensagem);
+                return $this->sendMessageWPP('Site ' . $alvo->nome . ' alterado.' . PHP_EOL . 'URL: ' . $alvo->url);
                 break;
             default:
-                Log::channel('jobs')->error('Status desconhecido (função mensagemWhats): ' . $statusWPP);
+                $mensagem = $statusWPP['ERRO'];
+                Log::channel('jobs')->error($mensagem);
+                return $mensagem;
                 break;
-        }
-    }
-
-    /**
-     * Manipula o status "CLOSED".
-     */
-    private function handleClosedStatus($alvo)
-    {
-        try {
-            $qr_codeWPP = $this->geraQRCodeWPP();
-            $email = [
-                'mensagem' => 'Site ' . $alvo->nome . ' alterado.' . PHP_EOL . 'URL: ' . $alvo->url,
-                'titulo' => 'QR Code WPP - Monitora Sites',
-                'destino' => 'bravo18br@gmail.com',
-                'layout' => 'emails.qrcode',
-                'qrcode' => $qr_codeWPP['qrcode'],
-            ];
-            Mail::send(new GMailController($email));
-        } catch (Exception $e) {
-            Log::channel('jobs')->error("Erro function handleClosedStatus: " . $e->getMessage());
         }
     }
 
@@ -105,21 +63,17 @@ class WppController extends Controller
                 'Authorization' => $wpp_bearer,
             ])->withBody(json_encode($body), 'application/json')->post($url);
             if ($response->successful()) {
-                return [
-                    'status' => 'SUCESSO',
-                    'mensagem' => 'Whats enviado: ' . $mensagem
-                ];
+                Log::channel('jobs')->info($mensagem . ' - enviada');
+                return 'SUCESSO';
             } else {
-                return [
-                    'status' => 'ERRO',
-                    'mensagem' => "Erro function sendMessageWPP: " . $response->status()
-                ];
+                $erro = "Erro function sendMessageWPP: " . $response->status();
+                Log::channel('jobs')->error($erro);
+                return $erro;
             }
         } catch (Exception $e) {
-            return [
-                'status' => 'ERRO',
-                'mensagem' => "Erro function sendMessageWPP: " . $e->getMessage()
-            ];
+            $erro = "Erro function sendMessageWPP: " . $e->getMessage();
+            Log::channel('jobs')->error($erro);
+            return $erro;
         }
     }
 
@@ -136,7 +90,7 @@ class WppController extends Controller
             $url = "{$wpp_server}/api/{$wpp_session}/start-session";
             $wpp_bearer = $this->gerar_bearerWPP();
             $body = [
-                "webhook" => "", // esse endpoint possui um webhook, talvez seja interessante avaliar a utilização
+                "webhook" => "",
                 "waitQrCode" => true,
             ];
             $response = Http::withHeaders([
@@ -146,18 +100,12 @@ class WppController extends Controller
             ])->withBody(json_encode($body), 'application/json')->post($url);
             if ($response->successful()) {
                 $responseJson = $response->json();
-                return $responseJson;
+                return $responseJson['qrcode'];
             } else {
-                return [
-                    'qrcode' => 'ERRO',
-                    'ERRO' => "Erro function geraQRCodeWPP: " . $response->status()
-                ];
+                return ['ERRO' => "Erro function geraQRCodeWPP: " . $response->status()];
             }
         } catch (Exception $e) {
-            return [
-                'qrcode' => 'ERRO',
-                'ERRO' => "Erro function geraQRCodeWPP: " . $e->getMessage()
-            ];
+            return ['ERRO' => "Erro function geraQRCodeWPP: " . $e->getMessage()];
         }
     }
 
