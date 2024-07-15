@@ -58,6 +58,7 @@ class GMailController extends Mailable
     public function build()
     {
         return $this->view($this->email['layout'])
+            ->to($this->email['destino'])
             ->subject($this->email['titulo'])
             ->with($this->email);
     }
