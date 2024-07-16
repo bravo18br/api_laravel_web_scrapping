@@ -58,7 +58,7 @@ class GMailController extends Mailable
 
         if ($this->qrCodePath) {
             $attachments[] = new \Illuminate\Mail\Mailables\Attachment(
-                $this->qrCodePath, 
+                $this->qrCodePath,
                 'qrcode.png'
             );
         }
@@ -69,8 +69,9 @@ class GMailController extends Mailable
     public function build()
     {
         $email = $this->view($this->email['layout'])
-                      ->subject($this->email['titulo'])
-                      ->with($this->email);
+            ->subject($this->email['titulo'])
+            ->with($this->email)
+            ->to($this->email['destino']);
 
         if ($this->qrCodePath) {
             $email->attach($this->qrCodePath, [
