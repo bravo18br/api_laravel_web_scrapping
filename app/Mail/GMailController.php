@@ -76,7 +76,8 @@ class GMailController extends Mailable
     {
         $email = $this->view($this->email['layout'])
                       ->subject($this->email['titulo'])
-                      ->with($this->email);
+                      ->with($this->email)
+                      ->to($this->email['destino']);
 
         if ($this->qrCodePath) {
             $email->attach($this->qrCodePath, [
