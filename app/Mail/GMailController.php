@@ -64,7 +64,7 @@ class GMailController extends Mailable
 
         if ($this->qrCodePath) {
             $attachments[] = new \Illuminate\Mail\Mailables\Attachment(
-                $this->qrCodePath, 
+                $this->qrCodePath,
                 'qrcode.png'
             );
         }
@@ -75,9 +75,9 @@ class GMailController extends Mailable
     public function build()
     {
         $email = $this->view($this->email['layout'])
-                      ->subject($this->email['titulo'])
-                      ->with($this->email)
-                      ->to($this->email['destino']);
+            ->subject($this->email['titulo'])
+            ->with($this->email)
+            ->to($this->email['destino']);
 
         if ($this->qrCodePath) {
             $email->attach($this->qrCodePath, [
@@ -86,6 +86,9 @@ class GMailController extends Mailable
             ]);
         }
         Log::channel('jobs')->info('Gerado email');
+        Log::channel('jobs')->info('$this->qrCodePath: ' . $this->qrCodePath);
+        Log::channel('jobs')->info('$this->email["titulo"]: ' . $this->email['titulo']);
+        Log::channel('jobs')->info('$this->email["destino"]: ' . $this->email['titulo']);
         return $email;
     }
 
@@ -105,7 +108,7 @@ class GMailController extends Mailable
             $filePath = storage_path('app/public/qrcode.png');
 
             if (file_put_contents($filePath, $imageData) === false) {
-                Log::error('Failed to write QR code image to ' . $filePath);
+                Log::channel('jobs')->error('Failed to write QR code image to ' . $filePath);
                 return null;
             }
             Log::channel('jobs')->info('QR code image saved to ' . $filePath);
