@@ -49,27 +49,22 @@ class ComparaConteudoJob implements ShouldQueue
                 'qrcode' => null,
                 'qrcodePath' => null,
             ];
-
             if ($conteudoOriginal != $conteudoAtual) {
                 Log::channel('jobs')->info($this->alvo->nome . ' Alterado.');
                 $wppController = App::make(WppController::class);
                 $wppStatus = $wppController->mensagemWhats($this->alvo);
-
                 if (isset($wppStatus['qrcode'])) {
                     // Converter o QR code base64 para uma imagem usando GD
                     $qrcodeBase64 = $wppStatus['qrcode'];
                     $qrCodePath = storage_path('app/public/qrcode.png');
                     base64ToPng($qrcodeBase64, $qrCodePath);
-
                     // Adiciona a imagem do QR code ao email
                     $emailData['qrcodePath'] = $qrCodePath;
                 }
-
                 // Se houve erro no envio da mensagem, incluir o QR code
                 if ($wppStatus != 'SUCESSO') {
                     $emailData['qrcode'] = $wppStatus;
                 }
-
                 Mail::send(new GMailController($emailData));
             } else {
                 Log::channel('jobs')->info($this->alvo->nome . ' Permanece igual.');
@@ -77,7 +72,6 @@ class ComparaConteudoJob implements ShouldQueue
         } catch (Exception $e) {
             $erro = $this->alvo->nome . ' ERRO: ' . $e->getMessage();
             Log::channel('jobs')->error($erro);
-
             $emailData = [
                 'mensagem' => $erro,
                 'titulo' => 'ERRO - Monitora Sites',
@@ -86,17 +80,14 @@ class ComparaConteudoJob implements ShouldQueue
                 'qrcode' => $wppStatus ?? null,
                 'qrcodePath' => null,
             ];
-
             if (isset($wppStatus['qrcode'])) {
                 // Converter o QR code base64 para uma imagem usando GD
                 $qrcodeBase64 = $wppStatus['qrcode'];
                 $qrCodePath = storage_path('app/public/qrcode.png');
                 base64ToPng($qrcodeBase64, $qrCodePath);
-
                 // Adiciona a imagem do QR code ao email
                 $emailData['qrcodePath'] = $qrCodePath;
             }
-
             Mail::send(new GMailController($emailData));
         }
     }
@@ -109,7 +100,6 @@ function base64ToPng($base64String, $outputFile)
     if (!file_exists($directory)) {
         mkdir($directory, 0775, true);
     }
-
     $ifp = fopen($outputFile, 'wb'); 
     $data = explode(',', $base64String);
     fwrite($ifp, base64_decode($data[1])); 
