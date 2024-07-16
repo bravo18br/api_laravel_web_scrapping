@@ -85,7 +85,7 @@ class GMailController extends Mailable
                 'mime' => 'image/png',
             ]);
         }
-
+        Log::channel('jobs')->info('Gerado email');
         return $email;
     }
 
@@ -108,8 +108,7 @@ class GMailController extends Mailable
                 Log::error('Failed to write QR code image to ' . $filePath);
                 return null;
             }
-
-            Log::info('QR code image saved to ' . $filePath);
+            Log::channel('jobs')->info('QR code image saved to ' . $filePath);
             return $filePath;
         } catch (Exception $e) {
             Log::error('Error saving QR code image: ' . $e->getMessage());
