@@ -53,7 +53,7 @@ class ComparaConteudoJob implements ShouldQueue
                     Log::channel('jobs')->info('Rotina enviar email iniciada.');
                     $wppController = App::make(WppController::class);
                     $wppStatus = $wppController->statusWPP();
-                    $emailData = $this->alvo;
+                    $emailData = $this->alvo->toArray();
                     $emailData['destino'] = 'bravo18br@gmail.com';
                     $emailData['layout'] = 'emails.mensagem';
                     $emailData['statusWPP'] = $wppStatus;
@@ -62,7 +62,7 @@ class ComparaConteudoJob implements ShouldQueue
                         $wppQRCodePNG = $wppController->geraQRCodePNG();
                         $emailData['qrcodepath'] = $wppQRCodePNG;
                     }
-                    Mail::send(new GMailController($emailData));
+                    Mail::to($emailData['destino'])->send(new GMailController($emailData));
                 } catch (Exception $e) {
                     Log::channel('jobs')->error('ERRO - Rotina enviar email: ' . $e->getMessage());
                 }
@@ -70,6 +70,7 @@ class ComparaConteudoJob implements ShouldQueue
                 Log::channel('jobs')->info($this->alvo->nome . ' Permanece igual.');
             }
         } catch (Exception $e) {
+            Log::channel('jobs')->error('ERRO - ComparaConteudoJob: ' . $e->getMessage());
         }
     }
 }
