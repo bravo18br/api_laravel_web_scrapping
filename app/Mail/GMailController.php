@@ -14,6 +14,7 @@ class GMailController extends Mailable
     use Queueable, SerializesModels;
 
     public $email;
+    public $qrCodePath;
 
     /**
      * Create a new message instance.
@@ -23,6 +24,7 @@ class GMailController extends Mailable
     public function __construct(array $email)
     {
         $this->email = $email;
+        $this->qrCodePath = $email['qrcodePath'] ?? null;
     }
 
     /**
@@ -52,14 +54,31 @@ class GMailController extends Mailable
      */
     public function attachments(): array
     {
-        return [];
+        $attachments = [];
+
+        if ($this->qrCodePath) {
+            $attachments[] = new \Illuminate\Mail\Mailables\Attachment(
+                $this->qrCodePath, 
+                'qrcode.png'
+            );
+        }
+
+        return $attachments;
     }
 
     public function build()
     {
-        return $this->view($this->email['layout'])
-            ->to($this->email['destino'])
-            ->subject($this->email['titulo'])
-            ->with($this->email);
+        $email = $this->view($this->email['layout'])
+                      ->subject($this->email['titulo'])
+                      ->with($this->email);
+
+        if ($this->qrCodePath) {
+            $email->attach($this->qrCodePath, [
+                'as' => 'qrcode.png',
+                'mime' => 'image/png',
+            ]);
+        }
+
+        return $email;
     }
 }
