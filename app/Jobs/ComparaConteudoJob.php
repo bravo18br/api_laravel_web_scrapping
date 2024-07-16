@@ -42,15 +42,15 @@ class ComparaConteudoJob implements ShouldQueue
             $conteudoOriginal = $this->alvo->conteudo;
             $conteudoAtual = $alvoController->geraConteudo($this->alvo);
             if ($conteudoOriginal != $conteudoAtual) {
+                Log::channel('jobs')->info($this->alvo->nome . ' Alterado.');
                 try {
                     Log::channel('jobs')->info('Rotina enviar notificação WPP Connect iniciada.');
-                    Log::channel('jobs')->info($this->alvo->nome . ' Alterado.');
+                    // TODO rotina de envio de whats
                 } catch (Exception $e) {
                     Log::channel('jobs')->error('ERRO - Rotina enviar notificação WPP Connect: ' . $e->getMessage());
                 }
                 try {
                     Log::channel('jobs')->info('Rotina enviar email iniciada.');
-                    Log::channel('jobs')->info($this->alvo->nome . ' Alterado.');
                     $wppController = App::make(WppController::class);
                     $wppStatus = $wppController->statusWPP();
                     $emailData = $this->alvo;

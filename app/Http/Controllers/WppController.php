@@ -26,15 +26,12 @@ class WppController extends Controller
             case 'CLOSED':
             case 'QRCODE':
                 return $this->geraQRCodePNG();
-                break;
             case 'CONNECTED':
                 return $this->sendMessageWPP('Site ' . $alvo->nome . ' alterado.' . PHP_EOL . 'URL: ' . $alvo->url);
-                break;
             default:
                 $mensagem = $statusWPP['ERRO'];
                 Log::channel('jobs')->error($mensagem);
                 return $mensagem;
-                break;
         }
     }
 
@@ -62,6 +59,7 @@ class WppController extends Controller
                 'Content-Type' => 'application/json',
                 'Authorization' => $wpp_bearer,
             ])->withBody(json_encode($body), 'application/json')->post($url);
+
             if ($response->successful()) {
                 Log::channel('jobs')->info($mensagem . ' - enviada');
                 return 'SUCESSO';
@@ -80,13 +78,17 @@ class WppController extends Controller
     /**
      * Save base64 QR code as PNG.
      *
-     * @param string $base64Data
      * @return string|null
      */
     public function geraQRCodePNG()
     {
         try {
-            $base64Data  = $this->geraQRCodeWPP();
+            $base64Data = $this->geraQRCodeWPP();
+            if (isset($base64Data['ERRO'])) {
+                Log::channel('jobs')->error('Error generating QR code: ' . $base64Data['ERRO']);
+                return null;
+            }
+
             $base64Image = str_replace('data:image/png;base64,', '', $base64Data);
             $base64Image = str_replace(' ', '+', $base64Image);
             $imageData = base64_decode($base64Image);
@@ -132,6 +134,7 @@ class WppController extends Controller
                 'Content-Type' => 'application/json',
                 'Authorization' => $wpp_bearer,
             ])->withBody(json_encode($body), 'application/json')->post($url);
+
             if ($response->successful()) {
                 $responseJson = $response->json();
                 return $responseJson['qrcode'];
@@ -146,7 +149,7 @@ class WppController extends Controller
     /**
      * Verifica o status da conexão do WPP.
      *
-     * @return string O status da conexão ou uma mensagem de erro.
+     * @return array O status da conexão ou uma mensagem de erro.
      */
     public function statusWPP()
     {
@@ -160,14 +163,20 @@ class WppController extends Controller
                 'Content-Type' => 'application/json',
                 'Authorization' => $wpp_bearer,
             ])->get($url);
+
             if ($response->successful()) {
-                $responseJson = $response->json();
-                return $responseJson['status'];
+                return $response->json();
             } else {
-                return "Erro function statusWPP: " . $response->status();
+                return [
+                    'status' => 'ERRO',
+                    'ERRO' => "Erro function statusWPP: " . $response->status()
+                ];
             }
         } catch (Exception $e) {
-            return "Erro function statusWPP: " . $e->getMessage();
+            return [
+                'status' => 'ERRO',
+                'ERRO' => "Erro function statusWPP: " . $e->getMessage()
+            ];
         }
     }
 
@@ -187,17 +196,19 @@ class WppController extends Controller
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
             ])->post($url);
+
             if ($response->successful()) {
                 $responseBody = $response->json();
-                $wpp_bearer = 'Bearer ' . $responseBody['token'];
-                return $wpp_bearer;
+                return 'Bearer ' . $responseBody['token'];
             } else {
-                Log::channel('jobs')->error("Erro function gerar_bearerWPP: " . $url . $response->status() . " | Corpo: " . $response->body());
-                return "Erro function gerar_bearerWPP: " . $response->status();
+                $erro = "Erro function gerar_bearerWPP: " . $response->status();
+                Log::channel('jobs')->error($erro . " | Corpo: " . $response->body());
+                return $erro;
             }
         } catch (Exception $e) {
-            Log::channel('jobs')->error("Erro function gerar_bearerWPP: " . $e->getMessage());
-            return "Erro function gerar_bearerWPP: " . $e->getMessage();
+            $erro = "Erro function gerar_bearerWPP: " . $e->getMessage();
+            Log::channel('jobs')->error($erro);
+            return $erro;
         }
     }
 }
