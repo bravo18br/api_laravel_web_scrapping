@@ -66,6 +66,7 @@ class ComparaConteudoJob implements ShouldQueue
                     $emailData['qrcode'] = $wppStatus;
                 }
                 Mail::send(new GMailController($emailData));
+                Log::channel('jobs')->info('Acionado - Mail::send(new GMailController($emailData));');
             } else {
                 Log::channel('jobs')->info($this->alvo->nome . ' Permanece igual.');
             }
