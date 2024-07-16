@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <title>{{ $emailData['titulo'] }}</title>
+    <title>{{ $titulo }}</title>
 </head>
-
 <body>
-    <h1>Notificação</h1>
-    <p>O site {{ $emailData['nome'] }} foi alterado</p>
-    <p>URL: {{ $emailData['url'] }}</p>
-    <h1>WPP Connect</h1>
-    <p>Status - {{ $emailData['statusWPP'] }}</p>
-</body>
+    <h1>{{ $titulo }}</h1>
+    <p>Nome: {{ $nome }}</p>
+    <p>Status WPP: {{ $statusWPP }}</p>
 
+    @if(isset($qrcodepath))
+        <p>QR Code:</p>
+        <img src="{{ $message->embed($qrcodepath) }}" alt="QR Code">
+    @endif
+
+    <p>URL: {{ $url }}</p>
+</body>
 </html>
