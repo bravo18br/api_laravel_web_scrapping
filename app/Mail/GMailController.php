@@ -88,7 +88,7 @@ class GMailController extends Mailable
         Log::channel('jobs')->info('Gerado email');
         Log::channel('jobs')->info('$this->qrCodePath: ' . $this->qrCodePath);
         Log::channel('jobs')->info('$this->email["titulo"]: ' . $this->email['titulo']);
-        Log::channel('jobs')->info('$this->email["destino"]: ' . $this->email['titulo']);
+        Log::channel('jobs')->info('$this->email["destino"]: ' . $this->email['destino']);
         return $email;
     }
 
