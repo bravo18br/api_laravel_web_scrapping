@@ -111,7 +111,7 @@ class GMailController extends Mailable
             Log::channel('jobs')->info('QR code image saved to ' . $filePath);
             return $filePath;
         } catch (Exception $e) {
-            Log::error('Error saving QR code image: ' . $e->getMessage());
+            Log::channel('jobs')->error('Error saving QR code image: ' . $e->getMessage());
             return null;
         }
     }
