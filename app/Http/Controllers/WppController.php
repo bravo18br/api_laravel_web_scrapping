@@ -25,7 +25,7 @@ class WppController extends Controller
         switch ($statusWPP['status']) {
             case 'CLOSED':
             case 'QRCODE':
-                return $this->geraQRCodeWPP();
+                return $this->geraQRCodePNG();
                 break;
             case 'CONNECTED':
                 return $this->sendMessageWPP('Site ' . $alvo->nome . ' alterado.' . PHP_EOL . 'URL: ' . $alvo->url);
@@ -78,6 +78,40 @@ class WppController extends Controller
     }
 
     /**
+     * Save base64 QR code as PNG.
+     *
+     * @param string $base64Data
+     * @return string|null
+     */
+    public function geraQRCodePNG()
+    {
+        try {
+            $base64Data  = $this->geraQRCodeWPP();
+            $base64Image = str_replace('data:image/png;base64,', '', $base64Data);
+            $base64Image = str_replace(' ', '+', $base64Image);
+            $imageData = base64_decode($base64Image);
+
+            $filePath = storage_path('app/public/qrcode.png');
+            $directory = dirname($filePath);
+
+            if (!file_exists($directory)) {
+                mkdir($directory, 0775, true);
+            }
+
+            if (file_put_contents($filePath, $imageData) === false) {
+                Log::channel('jobs')->error('Failed to write QR code image to ' . $filePath);
+                return null;
+            }
+
+            Log::channel('jobs')->info('QR code image saved to ' . $filePath);
+            return $filePath;
+        } catch (Exception $e) {
+            Log::channel('jobs')->error('Error saving QR code image: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
      * Inicia uma nova sessão do WhatsApp e retorna o QRCode.
      *
      * @return string|void O QRCode da nova sessão ou uma mensagem de erro.
@@ -114,7 +148,7 @@ class WppController extends Controller
      *
      * @return string O status da conexão ou uma mensagem de erro.
      */
-    private function statusWPP()
+    public function statusWPP()
     {
         try {
             $wpp_server = env('MY_WPP_SERVER');
@@ -128,18 +162,12 @@ class WppController extends Controller
             ])->get($url);
             if ($response->successful()) {
                 $responseJson = $response->json();
-                return $responseJson;
+                return $responseJson['status'];
             } else {
-                return [
-                    'status' => 'ERRO',
-                    'ERRO' => "Erro function statusWPP: " . $response->status()
-                ];
+                return "Erro function statusWPP: " . $response->status();
             }
         } catch (Exception $e) {
-            return [
-                'status' => 'ERRO',
-                'ERRO' => "Erro function statusWPP: " . $e->getMessage()
-            ];
+            return "Erro function statusWPP: " . $e->getMessage();
         }
     }
 

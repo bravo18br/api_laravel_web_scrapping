@@ -9,28 +9,21 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 
 class GMailController extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $email;
-    public $qrCodePath;
+    public $emailData;
 
     /**
      * Create a new message instance.
      *
-     * @param array $email
+     * @param array $emailData
      */
-    public function __construct(array $email)
+    public function __construct($emailData)
     {
-        $this->email = $email;
-
-        // Convert base64 QR code to an image and save it
-        if (isset($email['qrcode'])) {
-            $this->qrCodePath = $this->saveQrCodeAsPng($email['qrcode']);
-        }
+        $this->emailData = $emailData;
     }
 
     /**
@@ -39,7 +32,7 @@ class GMailController extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->email['titulo'],
+            subject: $this->emailData['titulo'],
         );
     }
 
@@ -49,7 +42,7 @@ class GMailController extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: $this->email['layout'],
+            view: $this->emailData['layout'],
         );
     }
 
@@ -61,61 +54,28 @@ class GMailController extends Mailable
     public function attachments(): array
     {
         $attachments = [];
-
-        if ($this->qrCodePath) {
+        if (isset($this->emailData['qrcodepath'])) {
             $attachments[] = new \Illuminate\Mail\Mailables\Attachment(
-                $this->qrCodePath,
+                $this->emailData['qrcodepath'],
                 'qrcode.png'
             );
         }
-
         return $attachments;
     }
 
     public function build()
     {
-        $email = $this->view($this->email['layout'])
-            ->subject($this->email['titulo'])
-            ->with($this->email)
-            ->to($this->email['destino']);
+        $email = $this->view($this->emailData['layout'])
+            ->subject($this->emailData['titulo'])
+            ->with($this->emailData)
+            ->to($this->emailData['destino']);
 
-        if ($this->qrCodePath) {
-            $email->attach($this->qrCodePath, [
+        if (isset($this->emailData['qrcodepath'])) {
+            $email->attach($this->emailData['qrcodepath'], [
                 'as' => 'qrcode.png',
                 'mime' => 'image/png',
             ]);
         }
-        Log::channel('jobs')->info('Gerado email');
-        Log::channel('jobs')->info('$this->qrCodePath: ' . $this->qrCodePath);
-        Log::channel('jobs')->info('$this->email["titulo"]: ' . $this->email['titulo']);
-        Log::channel('jobs')->info('$this->email["destino"]: ' . $this->email['destino']);
         return $email;
-    }
-
-    /**
-     * Save base64 QR code as PNG.
-     *
-     * @param string $base64Data
-     * @return string|null
-     */
-    private function saveQrCodeAsPng($base64Data)
-    {
-        try {
-            $base64Image = str_replace('data:image/png;base64,', '', $base64Data);
-            $base64Image = str_replace(' ', '+', $base64Image);
-            $imageData = base64_decode($base64Image);
-
-            $filePath = storage_path('app/public/qrcode.png');
-
-            if (file_put_contents($filePath, $imageData) === false) {
-                Log::channel('jobs')->error('Failed to write QR code image to ' . $filePath);
-                return null;
-            }
-            Log::channel('jobs')->info('QR code image saved to ' . $filePath);
-            return $filePath;
-        } catch (Exception $e) {
-            Log::channel('jobs')->error('Error saving QR code image: ' . $e->getMessage());
-            return null;
-        }
     }
 }
