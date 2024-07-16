@@ -53,8 +53,9 @@ class ComparaConteudoJob implements ShouldQueue
                 Log::channel('jobs')->info($this->alvo->nome . ' Alterado.');
                 $wppController = App::make(WppController::class);
                 $wppStatus = $wppController->mensagemWhats($this->alvo);
-                Log::channel('jobs')->info('$wppStatus: ' . $wppStatus);
+                
                 if (isset($wppStatus['qrcode'])) {
+                    Log::channel('jobs')->info('$wppStatus["qrcode"]: ' . $wppStatus['qrcode']);
                     // Converter o QR code base64 para uma imagem usando GD
                     $qrcodeBase64 = $wppStatus['qrcode'];
                     $qrCodePath = storage_path('app/public/qrcode.png');
@@ -66,7 +67,7 @@ class ComparaConteudoJob implements ShouldQueue
                 // Se houve erro no envio da mensagem, incluir o QR code
                 if ($wppStatus != 'SUCESSO') {
                     $emailData['qrcode'] = $wppStatus;
-                    Log::channel('jobs')->info('$emailData["qrcode"]: ' . $emailData['qrcode']);
+                    Log::channel('jobs')->info('$emailData["qrcode"]: ');
                 }
                 Mail::send(new GMailController($emailData));
                 Log::channel('jobs')->info('Acionado - Mail::send(new GMailController($emailData));');
@@ -108,5 +109,6 @@ function base64ToPng($base64String, $outputFile)
     $data = explode(',', $base64String);
     fwrite($ifp, base64_decode($data[1]));
     fclose($ifp);
+    Log::channel('jobs')->info('$outputFile: ' . $outputFile);
     return $outputFile;
 }
