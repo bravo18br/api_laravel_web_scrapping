@@ -6,7 +6,7 @@
 <body>
     <h1>{{ $titulo }}</h1>
     <p>Nome: {{ $nome }}</p>
-    <p>Status WPP: {{ $statusWPP['status'] }}</p>
+    <p>Status WPP: {{ $statusWPP }}</p>
 
     @if(isset($qrcodepath))
         <p>QR Code:</p>

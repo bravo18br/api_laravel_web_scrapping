@@ -56,9 +56,9 @@ class ComparaConteudoJob implements ShouldQueue
                     $emailData = $this->alvo->toArray();
                     $emailData['destino'] = 'bravo18br@gmail.com';
                     $emailData['layout'] = 'emails.mensagem';
-                    $emailData['statusWPP'] = $wppStatus;
+                    $emailData['statusWPP'] = $wppStatus['status'];
                     $emailData['titulo'] = 'Site ' . $emailData['nome'] . ' alterado';
-                    if ($wppStatus == 'CLOSED' || $wppStatus == 'QRCODE') {
+                    if ($wppStatus['status'] == 'CLOSED' || $wppStatus['status'] == 'QRCODE') {
                         $wppQRCodePNG = $wppController->geraQRCodePNG();
                         $emailData['qrcodepath'] = $wppQRCodePNG;
                     }
