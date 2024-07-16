@@ -62,12 +62,12 @@ class ComparaConteudoJob implements ShouldQueue
                         $wppQRCodePNG = $wppController->geraQRCodePNG();
                         $emailData['qrcodepath'] = $wppQRCodePNG;
                     }
-                    // Transform arrays in strings if necessary
-                    foreach ($emailData as $key => $value) {
-                        if (is_array($value)) {
-                            $emailData[$key] = json_encode($value);
-                        }
-                    }
+                    // // Transform arrays in strings if necessary
+                    // foreach ($emailData as $key => $value) {
+                    //     if (is_array($value)) {
+                    //         $emailData[$key] = json_encode($value);
+                    //     }
+                    // }
                     Mail::to($emailData['destino'])->send(new GMailController($emailData));
                 } catch (Exception $e) {
                     Log::channel('jobs')->error('ERRO - Rotina enviar email: ' . $e->getMessage());
