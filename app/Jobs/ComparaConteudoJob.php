@@ -104,9 +104,16 @@ class ComparaConteudoJob implements ShouldQueue
 
 function base64ToPng($base64String, $outputFile)
 {
+    // Verificar se o diretório existe, caso contrário, criar
+    $directory = dirname($outputFile);
+    if (!file_exists($directory)) {
+        mkdir($directory, 0775, true);
+    }
+
     $ifp = fopen($outputFile, 'wb'); 
     $data = explode(',', $base64String);
     fwrite($ifp, base64_decode($data[1])); 
     fclose($ifp); 
     return $outputFile; 
 }
+

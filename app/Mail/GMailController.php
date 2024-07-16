@@ -55,14 +55,12 @@ class GMailController extends Mailable
     public function attachments(): array
     {
         $attachments = [];
-
         if ($this->qrCodePath) {
             $attachments[] = new \Illuminate\Mail\Mailables\Attachment(
                 $this->qrCodePath,
                 'qrcode.png'
             );
         }
-
         return $attachments;
     }
 
@@ -72,14 +70,12 @@ class GMailController extends Mailable
             ->subject($this->email['titulo'])
             ->with($this->email)
             ->to($this->email['destino']);
-
         if ($this->qrCodePath) {
             $email->attach($this->qrCodePath, [
                 'as' => 'qrcode.png',
                 'mime' => 'image/png',
             ]);
         }
-
         return $email;
     }
 }
