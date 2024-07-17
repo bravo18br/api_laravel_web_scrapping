@@ -16,12 +16,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
-
         $users = [
             [
                 'name' => 'bravo18br',
@@ -64,10 +58,7 @@ class DatabaseSeeder extends Seeder
             ];
 
             foreach ($alvos as $alvo) {
-                $alvo = Alvo::create($alvo);
-                $alvoController = new AlvoController();
-                $alvo->conteudo = $alvoController->geraConteudo($alvo);
-                $alvo->save();
+                Alvo::create($alvo);
             }
     }
 }

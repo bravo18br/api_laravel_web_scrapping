@@ -30,7 +30,9 @@ class AlvoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $alvo = Alvo::create($request->all());
+        $alvo->conteudo = $this->geraConteudo($alvo);
+        $alvo->save();
     }
 
     /**
@@ -94,5 +96,14 @@ class AlvoController extends Controller
             }
         }
         return $html_filtrado ? $domDocument->saveHTML($html_filtrado) : null;
+    }
+
+    public function atualizaConteudoOriginal()
+    {
+        $alvos = Alvo::all();
+        foreach ($alvos as $alvo) {
+            $alvo->conteudo = $this->geraConteudo($alvo);
+            $alvo->save();
+        }
     }
 }
