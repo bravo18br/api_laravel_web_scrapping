@@ -73,6 +73,7 @@ class ComparaConteudoJob implements ShouldQueue
                 $this->alvo['alerta'] = $this->alvo['alerta'] + 1;
                 $this->alvo->save();
             } else {
+                Log::channel('jobs')->info('Enviado '.$this->alvo['alerta'] . ' alertas. Conteúdo do alvo atualizado.');
                 $this->alvo['conteudo'] = $alvoController->geraConteudo($this->alvo);
                 $this->alvo['alerta'] = 0;
                 $this->alvo->save();

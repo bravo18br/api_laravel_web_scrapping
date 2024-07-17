@@ -53,7 +53,7 @@ class DatabaseSeeder extends Seeder
             [
                 'nome' => 'COREN',
                 'url' => 'https://www.quadrix.org.br/todos-os-concursos/em-andamento/corenpr_2024.aspx',
-                'elemento' => 'main',
+                'elemento' => 'taba-publicacoes',
             ]
         ];
 
