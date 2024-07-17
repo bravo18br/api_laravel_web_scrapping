@@ -125,7 +125,6 @@ class AlvoController extends Controller
      *         response=404,
      *         description="Alvo não encontrado"
      *     )
-     * )
      */
     public function edit(Alvo $alvo)
     {
@@ -160,7 +159,6 @@ class AlvoController extends Controller
      *         response=404,
      *         description="Alvo não encontrado"
      *     )
-     * )
      */
     public function update(Request $request, Alvo $alvo)
     {
@@ -196,7 +194,6 @@ class AlvoController extends Controller
      *         response=404,
      *         description="Alvo não encontrado"
      *     )
-     * )
      */
     public function destroy(Alvo $alvo)
     {
@@ -224,7 +221,6 @@ class AlvoController extends Controller
      *         response=404,
      *         description="Alvo não encontrado"
      *     )
-     * )
      */
     public function geraConteudo(Alvo $alvo)
     {
