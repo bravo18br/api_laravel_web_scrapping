@@ -44,13 +44,13 @@ class ComparaConteudoJob implements ShouldQueue
             if ($conteudoOriginal != $conteudoAtual) {
                 Log::channel('jobs')->info($this->alvo->nome . ' Alterado.');
                 try {
-                    Log::channel('jobs')->info('Rotina enviar notificação WPP Connect iniciada.');
-                    // TODO rotina de envio de whats
+                    $wppController = App::make(WppController::class);
+                    $wppRetorno = $wppController->mensagemWhats($this->alvo);
+                    Log::channel('jobs')->info('Notificação whats: ' . $wppRetorno);
                 } catch (Exception $e) {
-                    Log::channel('jobs')->error('ERRO - Rotina enviar notificação WPP Connect: ' . $e->getMessage());
+                    Log::channel('jobs')->error('ERRO - Notificação whats: ' . $e->getMessage());
                 }
                 try {
-                    Log::channel('jobs')->info('Rotina enviar email iniciada.');
                     $wppController = App::make(WppController::class);
                     $wppStatus = $wppController->statusWPP();
                     $emailData = $this->alvo->toArray();
@@ -62,15 +62,10 @@ class ComparaConteudoJob implements ShouldQueue
                         $wppQRCodePNG = $wppController->geraQRCodePNG();
                         $emailData['qrcodepath'] = $wppQRCodePNG;
                     }
-                    // // Transform arrays in strings if necessary
-                    // foreach ($emailData as $key => $value) {
-                    //     if (is_array($value)) {
-                    //         $emailData[$key] = json_encode($value);
-                    //     }
-                    // }
                     Mail::to($emailData['destino'])->send(new GMailController($emailData));
+                    Log::channel('jobs')->info('Email enviado.');
                 } catch (Exception $e) {
-                    Log::channel('jobs')->error('ERRO - Rotina enviar email: ' . $e->getMessage());
+                    Log::channel('jobs')->error('ERRO - Email não enviado: ' . $e->getMessage());
                 }
             } else {
                 Log::channel('jobs')->info($this->alvo->nome . ' Permanece igual.');
