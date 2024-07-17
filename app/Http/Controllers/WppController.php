@@ -25,6 +25,7 @@ class WppController extends Controller
         switch ($statusWPP['status']) {
             case 'CLOSED':
             case 'QRCODE':
+            case 'INITIALIZING':
                 return $this->geraQRCodePNG();
             case 'CONNECTED':
                 return $this->sendMessageWPP('Site ' . $alvo->nome . ' alterado.' . PHP_EOL . 'URL: ' . $alvo->url);

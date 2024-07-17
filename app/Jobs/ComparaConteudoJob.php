@@ -38,8 +38,8 @@ class ComparaConteudoJob implements ShouldQueue
     public function handle(): void
     {
         try {
+            $alvoController = new AlvoController;
             if ($this->alvo['alerta'] < 3) {
-                $alvoController = new AlvoController;
                 $conteudoOriginal = $this->alvo->conteudo;
                 $conteudoAtual = $alvoController->geraConteudo($this->alvo);
                 if ($conteudoOriginal != $conteudoAtual) {
@@ -63,7 +63,7 @@ class ComparaConteudoJob implements ShouldQueue
                             $emailData['qrcodepath'] = $wppQRCodePNG;
                         }
                         Mail::to($emailData['destino'])->send(new GMailController($emailData));
-                        Log::channel('jobs')->info('Email enviado.');
+                        Log::channel('jobs')->info($emailData['nome'] . ' Email enviado.');
                     } catch (Exception $e) {
                         Log::channel('jobs')->error('ERRO - Email não enviado: ' . $e->getMessage());
                     }
@@ -73,6 +73,7 @@ class ComparaConteudoJob implements ShouldQueue
                 $this->alvo['alerta'] = $this->alvo['alerta'] + 1;
                 $this->alvo->save();
             } else {
+                $this->alvo['conteudo'] = $alvoController->geraConteudo($this->alvo);
                 $this->alvo['alerta'] = 0;
                 $this->alvo->save();
             }
