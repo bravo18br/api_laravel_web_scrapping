@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 namespace App\Http\Controllers;
 
@@ -232,7 +232,7 @@ class AlvoController extends Controller
         try {
             $html = file_get_contents($alvo->url);
         } catch (Exception $e) {
-            $html = '<main>Pagina inacessivel</</main>';
+            $html = '<main>Pagina inacessivel</main>';
         }
         $domDocument = new DOMDocument();
         $domDocument->loadHTML($html);
@@ -305,4 +305,3 @@ class AlvoController extends Controller
  *     @OA\Property(property="conteudo", type="string", nullable=true)
  * )
  */
-
