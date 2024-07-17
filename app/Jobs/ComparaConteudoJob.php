@@ -81,5 +81,6 @@ class ComparaConteudoJob implements ShouldQueue
         } catch (Exception $e) {
             Log::channel('jobs')->error('ERRO - ComparaConteudoJob: ' . $e->getMessage());
         }
+        sleep(1);
     }
 }

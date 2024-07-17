@@ -127,10 +127,15 @@ class AlvoController extends Controller
      */
     public function atualizaConteudoOriginal()
     {
-        $alvos = Alvo::all();
-        foreach ($alvos as $alvo) {
-            $alvo->conteudo = $this->geraConteudo($alvo);
-            $alvo->save();
+        try {
+            $alvos = Alvo::all();
+            foreach ($alvos as $alvo) {
+                $alvo->conteudo = $this->geraConteudo($alvo);
+                $alvo->save();
+            }
+            return response()->json('Conteúdo original atualizado', 200);
+        } catch (Exception $e) {
+            return response()->json('Conteúdo original não atualizado: ' . $e->getMessage(), 200);
         }
     }
 }
