@@ -9,12 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 /**
- * @OA\Info(
- *     title="API Monitora Sites",
- *     version="1.0.0",
- *     description="API para monitoramento de mudanças em sites."
- * )
- *
  * @OA\Tag(
  *     name="Alvos",
  *     description="Gerenciamento de Alvos"
