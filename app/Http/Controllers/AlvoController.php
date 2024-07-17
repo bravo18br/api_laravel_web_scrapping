@@ -27,7 +27,7 @@ class AlvoController extends Controller
      *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Alvo"))
      *     )
      * )
-     */
+    */
     public function index()
     {
         $alvos = Alvo::all();
@@ -53,7 +53,7 @@ class AlvoController extends Controller
      *         description="Dados inválidos"
      *     )
      * )
-     */
+    */
     public function store(Request $request)
     {
         $request->validate([
@@ -98,34 +98,34 @@ class AlvoController extends Controller
      *         description="Alvo não encontrado"
      *     )
      * )
-     */
+    */
     public function show(Alvo $alvo)
     {
         return response()->json($alvo);
     }
 
-    /**
-     * Mostra o formulário para editar o recurso especificado.
-     * @OA\Get(
-     *     path="/alvos/{id}/edit",
-     *     summary="Mostra o formulário para editar um alvo",
-     *     tags={"Alvos"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Formulário de edição",
-     *         @OA\JsonContent(ref="#/components/schemas/Alvo")
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Alvo não encontrado"
-     *     )
-     */
+    // Remover ou comentar a anotação do método edit para evitar erros de documentação
+    /*
+    * @OA\Get(
+    *     path="/alvos/{id}/edit",
+    *     summary="Mostra o formulário para editar um alvo",
+    *     tags={"Alvos"},
+    *     @OA\Parameter(
+    *         name="id",
+    *         in="path",
+    *         required=true,
+    *         @OA\Schema(type="integer")
+    *     ),
+    *     @OA\Response(
+    *         response=200,
+    *         description="Formulário de edição",
+    *         @OA\JsonContent(ref="#/components/schemas/Alvo")
+    *     ),
+    *     @OA\Response(
+    *         response=404,
+    *         description="Alvo não encontrado"
+    *     )
+    */
     public function edit(Alvo $alvo)
     {
         // Não utilizado em contexto de API
@@ -159,7 +159,8 @@ class AlvoController extends Controller
      *         response=404,
      *         description="Alvo não encontrado"
      *     )
-     */
+     * )
+    */
     public function update(Request $request, Alvo $alvo)
     {
         $request->validate([
@@ -194,7 +195,8 @@ class AlvoController extends Controller
      *         response=404,
      *         description="Alvo não encontrado"
      *     )
-     */
+     * )
+    */
     public function destroy(Alvo $alvo)
     {
         $alvo->delete();
@@ -269,7 +271,7 @@ class AlvoController extends Controller
      *         description="Erro ao atualizar o conteúdo original"
      *     )
      * )
-     */
+    */
     public function atualizaConteudoOriginal()
     {
         try {
