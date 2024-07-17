@@ -67,13 +67,13 @@ class ComparaConteudoJob implements ShouldQueue
                     } catch (Exception $e) {
                         Log::channel('jobs')->error('ERRO - Email não enviado: ' . $e->getMessage());
                     }
+                    $this->alvo['alerta'] = $this->alvo['alerta'] + 1;
+                    $this->alvo->save();
                 } else {
                     Log::channel('jobs')->info($this->alvo->nome . ' Permanece igual.');
                 }
-                $this->alvo['alerta'] = $this->alvo['alerta'] + 1;
-                $this->alvo->save();
             } else {
-                Log::channel('jobs')->info('Enviado '.$this->alvo['alerta'] . ' alertas. Conteúdo do alvo atualizado.');
+                Log::channel('jobs')->info('Enviado ' . $this->alvo['alerta'] . ' alertas. Conteúdo do alvo atualizado.');
                 $this->alvo['conteudo'] = $alvoController->geraConteudo($this->alvo);
                 $this->alvo['alerta'] = 0;
                 $this->alvo->save();
