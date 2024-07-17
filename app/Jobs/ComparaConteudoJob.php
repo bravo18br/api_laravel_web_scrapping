@@ -43,10 +43,12 @@ class ComparaConteudoJob implements ShouldQueue
             $conteudoAtual = $alvoController->geraConteudo($this->alvo);
             if ($conteudoOriginal != $conteudoAtual) {
                 Log::channel('jobs')->info($this->alvo->nome . ' Alterado.');
+                Log::channel('jobs')->info('$conteudoOriginal: ' . $conteudoOriginal);
+                Log::channel('jobs')->info('$conteudoAtual: ' . $conteudoAtual);
                 try {
                     $wppController = App::make(WppController::class);
                     $wppRetorno = $wppController->mensagemWhats($this->alvo);
-                    Log::channel('jobs')->info('Notificação whats: ' . $wppRetorno);
+                    // Log::channel('jobs')->info('Notificação whats: ' . $wppRetorno);
                 } catch (Exception $e) {
                     Log::channel('jobs')->error('ERRO - Notificação whats: ' . $e->getMessage());
                 }

@@ -104,8 +104,7 @@ class WppController extends Controller
                 Log::channel('jobs')->error('Failed to write QR code image to ' . $filePath);
                 return null;
             }
-
-            Log::channel('jobs')->info('QR code image saved to ' . $filePath);
+            // Log::channel('jobs')->info('QR code image saved to ' . $filePath);
             return $filePath;
         } catch (Exception $e) {
             Log::channel('jobs')->error('Error saving QR code image: ' . $e->getMessage());
