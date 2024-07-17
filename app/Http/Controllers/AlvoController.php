@@ -10,62 +10,86 @@ use Illuminate\Http\Request;
 class AlvoController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Exibe uma lista de recursos.
      */
     public function index()
     {
-        //
+        $alvos = Alvo::all();
+        return response()->json($alvos);
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
+     * Armazena um novo recurso no armazenamento.
      */
     public function store(Request $request)
     {
-        $alvo = Alvo::create($request->all());
-        $alvo->conteudo = $this->geraConteudo($alvo);
-        $alvo->save();
+        $request->validate([
+            'nome' => 'required|string|max:255',
+            'url' => 'required|url',
+            'elemento' => 'required|string',
+        ]);
+
+        return $this->createAlvo($request->all());
     }
 
     /**
-     * Display the specified resource.
+     * Método auxiliar para criar um novo recurso.
+     */
+    public function createAlvo(array $data)
+    {
+        $alvo = Alvo::create($data);
+        $alvo->conteudo = $this->geraConteudo($alvo);
+        $alvo->save();
+
+        return $alvo;
+    }
+
+    /**
+     * Exibe o recurso especificado.
      */
     public function show(Alvo $alvo)
     {
-        //
+        return response()->json($alvo);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Mostra o formulário para editar o recurso especificado.
      */
     public function edit(Alvo $alvo)
     {
-        //
+        // Não utilizado em contexto de API
     }
 
     /**
-     * Update the specified resource in storage.
+     * Atualiza o recurso especificado no armazenamento.
      */
     public function update(Request $request, Alvo $alvo)
     {
-        //
+        $request->validate([
+            'nome' => 'sometimes|required|string|max:255',
+            'url' => 'sometimes|required|url',
+            'elemento' => 'sometimes|required|string',
+        ]);
+
+        $alvo->update($request->all());
+        $alvo->conteudo = $this->geraConteudo($alvo);
+        $alvo->save();
+
+        return response()->json($alvo);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove o recurso especificado do armazenamento.
      */
     public function destroy(Alvo $alvo)
     {
-        //
+        $alvo->delete();
+        return response()->json(null, 204);
     }
+
+    /**
+     * Gera o conteúdo do alvo a partir da URL e do elemento especificado.
+     */
     public function geraConteudo(Alvo $alvo)
     {
         libxml_use_internal_errors(true);
@@ -98,6 +122,9 @@ class AlvoController extends Controller
         return $html_filtrado ? $domDocument->saveHTML($html_filtrado) : null;
     }
 
+    /**
+     * Atualiza o conteúdo original de todos os alvos.
+     */
     public function atualizaConteudoOriginal()
     {
         $alvos = Alvo::all();

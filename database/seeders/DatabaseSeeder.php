@@ -3,19 +3,18 @@
 namespace Database\Seeders;
 
 use App\Http\Controllers\AlvoController;
-use App\Models\Alvo;
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Seed the application's database.
+     * Popula o banco de dados da aplicação.
      */
     public function run(): void
     {
+        // Cria os usuários de exemplo
         $users = [
             [
                 'name' => 'bravo18br',
@@ -29,36 +28,39 @@ class DatabaseSeeder extends Seeder
             User::create($user);
         }
 
+        // Define os alvos de exemplo
         $alvos = [
             [
-                'nome'=>'Câmara SJP',
-                'url'=>'https://cmsjp.pr.gov.br/concurso-publico-2023',
-                'elemento'=>'post-100',
+                'nome' => 'Câmara SJP',
+                'url' => 'https://cmsjp.pr.gov.br/concurso-publico-2023',
+                'elemento' => 'post-100',
             ],
             [
-                'nome'=>'CPNU Cesgranrio',
-                'url'=>'https://cpnu.cesgranrio.org.br/editais',
-                'elemento'=>'main',
+                'nome' => 'CPNU Cesgranrio',
+                'url' => 'https://cpnu.cesgranrio.org.br/editais',
+                'elemento' => 'main',
             ],
             [
-                'nome'=>'DRH-SEAP',
-                'url'=>'https://www.institutoaocp.org.br/concursos/596',
-                'elemento'=>'main',
+                'nome' => 'DRH-SEAP',
+                'url' => 'https://www.institutoaocp.org.br/concursos/596',
+                'elemento' => 'main',
             ],
             [
-                'nome'=>'Câmara-SFS',
-                'url'=>'https://www.institutounivida.org.br/concurso/cmsfs2024',
-                'elemento'=>'main',
+                'nome' => 'Câmara-SFS',
+                'url' => 'https://www.institutounivida.org.br/concurso/cmsfs2024',
+                'elemento' => 'main',
             ],
             [
-                'nome'=>'COREN',
-                'url'=>'https://www.quadrix.org.br/todos-os-concursos/em-andamento/corenpr_2024.aspx',
-                'elemento'=>'main',
+                'nome' => 'COREN',
+                'url' => 'https://www.quadrix.org.br/todos-os-concursos/em-andamento/corenpr_2024.aspx',
+                'elemento' => 'main',
             ]
-            ];
+        ];
 
-            foreach ($alvos as $alvo) {
-                Alvo::create($alvo);
-            }
+        // Cria os alvos usando o controlador
+        $alvoController = new AlvoController();
+        foreach ($alvos as $alvoData) {
+            $alvoController->createAlvo($alvoData);
+        }
     }
 }

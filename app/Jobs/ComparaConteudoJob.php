@@ -38,39 +38,43 @@ class ComparaConteudoJob implements ShouldQueue
     public function handle(): void
     {
         try {
-            $alvoController = new AlvoController;
-            $conteudoOriginal = $this->alvo->conteudo;
-            $conteudoAtual = $alvoController->geraConteudo($this->alvo);
-            if ($conteudoOriginal != $conteudoAtual) {
-                Log::channel('jobs')->info($this->alvo->nome . ' Alterado.');
-                Log::channel('jobs')->info('$conteudoOriginal: ' . $conteudoOriginal);
-                Log::channel('jobs')->info('$conteudoAtual: ' . $conteudoAtual);
-                try {
-                    $wppController = App::make(WppController::class);
-                    $wppRetorno = $wppController->mensagemWhats($this->alvo);
-                    // Log::channel('jobs')->info('Notificação whats: ' . $wppRetorno);
-                } catch (Exception $e) {
-                    Log::channel('jobs')->error('ERRO - Notificação whats: ' . $e->getMessage());
-                }
-                try {
-                    $wppController = App::make(WppController::class);
-                    $wppStatus = $wppController->statusWPP();
-                    $emailData = $this->alvo->toArray();
-                    $emailData['destino'] = 'bravo18br@gmail.com';
-                    $emailData['layout'] = 'emails.mensagem';
-                    $emailData['statusWPP'] = $wppStatus['status'];
-                    $emailData['titulo'] = 'Site ' . $emailData['nome'] . ' alterado';
-                    if ($wppStatus['status'] == 'CLOSED' || $wppStatus['status'] == 'QRCODE') {
-                        $wppQRCodePNG = $wppController->geraQRCodePNG();
-                        $emailData['qrcodepath'] = $wppQRCodePNG;
+            if ($this->alvo['alerta'] < 3) {
+                $alvoController = new AlvoController;
+                $conteudoOriginal = $this->alvo->conteudo;
+                $conteudoAtual = $alvoController->geraConteudo($this->alvo);
+                if ($conteudoOriginal != $conteudoAtual) {
+                    Log::channel('jobs')->info($this->alvo->nome . ' Alterado.');
+                    try {
+                        $wppController = App::make(WppController::class);
+                        $wppController->mensagemWhats($this->alvo);
+                    } catch (Exception $e) {
+                        Log::channel('jobs')->error('ERRO - Notificação whats: ' . $e->getMessage());
                     }
-                    Mail::to($emailData['destino'])->send(new GMailController($emailData));
-                    Log::channel('jobs')->info('Email enviado.');
-                } catch (Exception $e) {
-                    Log::channel('jobs')->error('ERRO - Email não enviado: ' . $e->getMessage());
+                    try {
+                        $wppController = App::make(WppController::class);
+                        $wppStatus = $wppController->statusWPP();
+                        $emailData = $this->alvo->toArray();
+                        $emailData['destino'] = 'bravo18br@gmail.com';
+                        $emailData['layout'] = 'emails.mensagem';
+                        $emailData['statusWPP'] = $wppStatus['status'];
+                        $emailData['titulo'] = 'Site ' . $emailData['nome'] . ' alterado';
+                        if ($wppStatus['status'] == 'CLOSED' || $wppStatus['status'] == 'QRCODE') {
+                            $wppQRCodePNG = $wppController->geraQRCodePNG();
+                            $emailData['qrcodepath'] = $wppQRCodePNG;
+                        }
+                        Mail::to($emailData['destino'])->send(new GMailController($emailData));
+                        Log::channel('jobs')->info('Email enviado.');
+                    } catch (Exception $e) {
+                        Log::channel('jobs')->error('ERRO - Email não enviado: ' . $e->getMessage());
+                    }
+                } else {
+                    Log::channel('jobs')->info($this->alvo->nome . ' Permanece igual.');
                 }
+                $this->alvo['alerta'] = $this->alvo['alerta'] + 1;
+                $this->alvo->save();
             } else {
-                Log::channel('jobs')->info($this->alvo->nome . ' Permanece igual.');
+                $this->alvo['alerta'] = 0;
+                $this->alvo->save();
             }
         } catch (Exception $e) {
             Log::channel('jobs')->error('ERRO - ComparaConteudoJob: ' . $e->getMessage());

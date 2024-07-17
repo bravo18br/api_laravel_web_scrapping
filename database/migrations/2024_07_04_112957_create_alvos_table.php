@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('url');
             $table->string('elemento');
             $table->string('conteudo')->nullable();
+            $table->integer('alerta')->default(0);
             $table->timestamps();
         });
     }

@@ -14,6 +14,7 @@ class Alvo extends Model
         'url',
         'elemento',
         'conteudo',
+        'alerta',
     ];
 
 }
