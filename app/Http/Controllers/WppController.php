@@ -12,6 +12,11 @@ use Illuminate\Support\Facades\Log;
  *     version="1.0.0",
  *     description="Documentação API para o Monitora Sites."
  * )
+ *
+ * @OA\Tag(
+ *     name="Wpp Controller",
+ *     description="Operações relacionadas ao WhatsApp"
+ * )
  */
 class WppController extends Controller
 {
