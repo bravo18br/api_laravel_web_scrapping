@@ -6,6 +6,7 @@ use App\Models\Alvo;
 use DOMDocument;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class AlvoController extends Controller
 {
@@ -133,9 +134,13 @@ class AlvoController extends Controller
                 $alvo->conteudo = $this->geraConteudo($alvo);
                 $alvo->save();
             }
-            return response()->json('Conteúdo original atualizado', 200);
+            $message = 'Conteúdo original atualizado';
+            Log::channel('jobs')->info($message);
+            return response()->json($message, 200);
         } catch (Exception $e) {
-            return response()->json('Conteúdo original não atualizado: ' . $e->getMessage(), 200);
+            $erro = 'ERRO - atualizaConteudoOriginal: ' . $e->getMessage();
+            Log::channel('jobs')->error($erro);
+            return response()->json($erro, 200);
         }
     }
 }
