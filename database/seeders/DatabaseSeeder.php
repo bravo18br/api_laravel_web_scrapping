@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Http\Controllers\AlvoController;
 use App\Models\User;
+use App\Models\Alvo;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -25,7 +26,10 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($users as $user) {
-            User::create($user);
+            User::firstOrCreate(
+                ['email' => $user['email']],
+                $user
+            );
         }
 
         // Define os alvos de exemplo
@@ -60,7 +64,10 @@ class DatabaseSeeder extends Seeder
         // Cria os alvos usando o controlador
         $alvoController = new AlvoController();
         foreach ($alvos as $alvoData) {
-            $alvoController->createAlvo($alvoData);
+            Alvo::firstOrCreate(
+                ['url' => $alvoData['url']],
+                $alvoData
+            );
         }
     }
 }
