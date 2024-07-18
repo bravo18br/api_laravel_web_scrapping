@@ -103,7 +103,7 @@ class WppController extends Controller
 
     public function getQRCodeBIN()
     {
-        return response()->json($this->geraQRCodeWPP());
+        return response()->json(['qrcode' => 'data:image/png;base64,' . $this->geraQRCodeWPP()]);
     }
 
     private function geraQRCodeWPP()
