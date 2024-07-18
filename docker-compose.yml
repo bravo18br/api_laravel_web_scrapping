@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chris_api_laravel_web_scrapping
+    image: chris_api_laravel_web_scrapping:alpha
+    restart: always
+    working_dir: /var/www/html
+    cpus: "1.0"
+    mem_limit: 512m
+    ports:
+      - "8077:80"
+    volumes:
+      - ./app:/var/www/html
+      - ./apache.conf:/etc/apache2/sites-available/000-default.conf
+    networks:
+      - chris_api_laravel_web_scrapping
+    environment:
+      - APACHE_RUN_USER=www-data
+      - APACHE_RUN_GROUP=www-data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -I -f http://localhost || exit 1"]
+      interval: 60s 
+      timeout: 10s
+      retries: 3
+
+  wpp:
+    image: wppconnect/server-cli:main
+    container_name: wppconnect
+    networks:
+      - chris_api_laravel_web_scrapping
+    restart: always
+    ports:
+      - "8075:21465"
+      - "8074:8080"
+    volumes:
+      - ./config.json:/usr/src/wpp-server/config.json
+    cpus: "1.0"
+    mem_limit: 1024m
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -S http://localhost:21465/api-docs/ || exit 1"]
+      interval: 60s 
+      timeout: 10s
+      retries: 3
+    command: wppserver -c /usr/src/wpp-server/config.json --frontend
+
+networks:
+  chris_api_laravel_web_scrapping:
+    name: chris_api_laravel_web_scrapping

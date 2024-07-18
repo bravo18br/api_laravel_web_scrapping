@@ -1,66 +1,129 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Monitora Sites API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Este projeto é uma aplicação Laravel que monitora sites e envia notificações via WhatsApp quando detecta alterações. A aplicação é executada em contêineres Docker para facilitar a configuração e a execução.
 
-## About Laravel
+## Instruções para Rodar a Aplicação
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### 1. Copiar todos os arquivos para uma pasta no servidor Docker
+- Faça um clone do projeto para uma pasta no servidor Docker:
+  ```sh
+  gh repo clone bravo18br/docker_api_laravel_web_scrapping chris_api_laravel_web_scrapping
+  ```
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 2. Editar o `.env`
+- Renomeie o arquivo `.env.example` para `.env` na pasta do projeto.
+- Preencha a linha `GITHUB_TOKEN=<seu_github_token>`.
+- Edite as linhas `MAIL_USERNAME='usuario@gmail.com'` e `MAIL_PASSWORD='senha para aplicaçoes do Google'`.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 3. Criar a imagem
+- Navegue até a pasta do projeto no terminal.
+- Execute o comando:
+  ```sh
+  docker build -t chris_api_laravel_web_scrapping:alpha .
+  ```
 
-## Learning Laravel
+### 4. Rodar o Docker Compose
+- Navegue até a pasta do projeto no terminal.
+- Execute o comando:
+  ```sh
+  docker compose up -d
+  ```
+- Sempre execute o "docker compose up -d" sem o hífen no comando, pois o "docker-compose" é antigo e gera vários problemas de conflitos de imagens/volumes.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 5. Caso precise parar a execução
+- Navegue até a pasta do projeto no terminal.
+- Execute o comando:
+  ```sh
+  docker compose down
+  ```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### 6. Caso precise acessar os containers em execução
+- Execute o comando:
+  ```sh
+  docker exec -it chris_api_laravel_web_scrapping /bin/bash
+  ```
+  ```sh
+  docker exec -it wppconnect /bin/sh
+  ```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 7. Para verificar os logs
+- Execute o comando:
+  ```sh
+  tail -f storage/logs/jobs.log
+  ```
 
-## Laravel Sponsors
+## Conseguir o GITHUB_TOKEN
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Para gerar um token de acesso pessoal (Personal Access Token) no GitHub, siga os passos abaixo:
 
-### Premium Partners
+1. **Acesse o GitHub:**
+   - Abra seu navegador e vá para [GitHub](https://github.com).
+   - Faça login com sua conta do GitHub.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+2. **Navegue até as Configurações:**
+   - Clique no ícone do seu perfil no canto superior direito.
+   - Selecione "Settings" (Configurações) no menu suspenso.
 
-## Contributing
+3. **Acesse a seção de Tokens:**
+   - No menu lateral esquerdo, clique em "Developer settings" (Configurações de desenvolvedor).
+   - Em seguida, clique em "Personal access tokens" (Tokens de acesso pessoal).
+   - Selecione "Tokens (classic)" para criar um token de acesso clássico.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+4. **Gerar um novo token:**
+   - Clique no botão "Generate new token" (Gerar novo token).
+   - Dê um nome ao token para referência futura.
+   - Selecione as permissões necessárias. Para acessar repositórios privados, selecione `repo`.
+   - Desça até o final da página e clique em "Generate token" (Gerar token).
 
-## Code of Conduct
+5. **Copiar o token:**
+   - O token será exibido uma única vez. Copie-o e armazene-o em um lugar seguro.
+   - Adicione o token copiado ao arquivo `.env` da sua aplicação.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Conseguir Credenciais do GMAIL
 
-## Security Vulnerabilities
+Para obter as credenciais do GMAIL, siga os passos abaixo:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+1. **Acesse a conta do Google:**
+   - Abra seu navegador e vá para [Google](https://accounts.google.com).
+   - Faça login com sua conta do Google.
 
-## License
+2. **Navegue até as Configurações de Segurança:**
+   - Clique na sua foto de perfil no canto superior direito e selecione "Gerenciar sua Conta do Google".
+   - No menu lateral esquerdo, clique em "Segurança".
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+3. **Ative a verificação em duas etapas:**
+   - Em "Como fazer login no Google", clique em "Verificação em duas etapas" e siga as instruções para ativá-la.
+
+4. **Crie uma senha de aplicativo:**
+   - Após ativar a verificação em duas etapas, vá para a seção "Senhas de app".
+   - Selecione "Correio" e "Computador Windows" (ou outro dispositivo se preferir) e clique em "Gerar".
+   - Uma senha será gerada. Copie essa senha.
+
+5. **Adicionar as credenciais ao arquivo `.env`:**
+   - No arquivo `.env`, defina `MAIL_USERNAME='usuario@gmail.com'` e `MAIL_PASSWORD='senha_gerada'`.
+
+## Acessar a Aplicação
+
+1. **Acesse o navegador:**
+   - Abra o navegador e acesse:
+     ```plaintext
+     http://localhost:8077
+     ```
+   - Ou, se estiver acessando de outro dispositivo na mesma rede, substitua `localhost` pelo endereço IP do servidor.
+     ```plaintext
+     http://172.20.10.37:8077/
+     ```
+
+## Documentação Swagger
+
+   - Para acessar a documentação Swagger da API, abra o navegador e acesse:
+      ```plaintext
+      http://localhost:8077/api/docs
+      ```
+   - Ou, se estiver acessando de outro dispositivo na mesma rede, substitua `localhost` pelo endereço IP do servidor.
+      ```plaintext
+      http://172.20.10.37:8077/api/docs
+      ```
+
+Seguindo essas instruções, você deverá ser capaz de rodar a aplicação Laravel usando Docker e Docker Compose e acessar a documentação da API gerada pelo Swagger.
+```
