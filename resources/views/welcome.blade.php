@@ -16,8 +16,7 @@
     <h3>1. Copiar todos os arquivos para uma pasta no servidor Docker</h3>
     <ul>
         <li>Faça um clone do projeto para uma pasta no servidor Docker:
-            <pre><code>sh
-gh repo clone bravo18br/docker_api_laravel_web_scrapping chris_api_laravel_web_scrapping
+            <pre><code>gh repo clone bravo18br/docker_api_laravel_web_scrapping chris_api_laravel_web_scrapping
 </code></pre>
         </li>
     </ul>
@@ -33,8 +32,7 @@ gh repo clone bravo18br/docker_api_laravel_web_scrapping chris_api_laravel_web_s
     <ul>
         <li>Navegue até a pasta do projeto no terminal.</li>
         <li>Execute o comando:
-            <pre><code>sh
-docker build -t chris_api_laravel_web_scrapping:alpha .
+            <pre><code>docker build -t chris_api_laravel_web_scrapping:alpha .
 </code></pre>
         </li>
     </ul>
@@ -43,8 +41,7 @@ docker build -t chris_api_laravel_web_scrapping:alpha .
     <ul>
         <li>Navegue até a pasta do projeto no terminal.</li>
         <li>Execute o comando:
-            <pre><code>sh
-docker compose up -d
+            <pre><code>docker compose up -d
 </code></pre>
         </li>
         <li>Sempre execute o "docker compose up -d" sem o hífen no comando, pois o "docker-compose" é antigo e gera vários problemas de conflitos de imagens/volumes.</li>
@@ -54,8 +51,7 @@ docker compose up -d
     <ul>
         <li>Navegue até a pasta do projeto no terminal.</li>
         <li>Execute o comando:
-            <pre><code>sh
-docker compose down
+            <pre><code>docker compose down
 </code></pre>
         </li>
     </ul>
@@ -63,8 +59,7 @@ docker compose down
     <h3>6. Caso precise acessar os containers em execução</h3>
     <ul>
         <li>Execute o comando:
-            <pre><code>sh
-docker exec -it chris_api_laravel_web_scrapping /bin/bash
+            <pre><code>docker exec -it chris_api_laravel_web_scrapping /bin/bash
 docker exec -it wppconnect /bin/sh
 </code></pre>
         </li>
@@ -73,8 +68,7 @@ docker exec -it wppconnect /bin/sh
     <h3>7. Para verificar os logs</h3>
     <ul>
         <li>Execute o comando:
-            <pre><code>sh
-tail -f storage/logs/jobs.log
+            <pre><code>tail -f storage/logs/jobs.log
 </code></pre>
         </li>
     </ul>
@@ -161,35 +155,16 @@ tail -f storage/logs/jobs.log
         <li><strong>Acesse o navegador:</strong>
             <ul>
                 <li>Abra o navegador e acesse:
-                    <pre><code>plaintext
-http://localhost:8077
+                    <pre><code>http://localhost:8077
 </code></pre>
                 </li>
                 <li>Ou, se estiver acessando de outro dispositivo na mesma rede, substitua <code>localhost</code> pelo endereço IP do servidor.
-                    <pre><code>plaintext
-http://172.20.10.37:8077/
+                    <pre><code>http://172.20.10.37:8077/
 </code></pre>
                 </li>
             </ul>
         </li>
     </ol>
-
-    <h2>Documentação Swagger</h2>
-
-    <ul>
-        <li>Para acessar a documentação Swagger da API, abra o navegador e acesse:
-            <pre><code>plaintext
-http://localhost:8077/api/docs
-</code></pre>
-        </li>
-        <li>Ou, se estiver acessando de outro dispositivo na mesma rede, substitua <code>localhost</code> pelo endereço IP do servidor.
-            <pre><code>plaintext
-http://172.20.10.37:8077/api/docs
-</code></pre>
-        </li>
-    </ul>
-
-    <p>Seguindo essas instruções, você deverá ser capaz de rodar a aplicação Laravel usando Docker e Docker Compose e acessar a documentação da API gerada pelo Swagger.</p>
 </body>
 
 </html>
