@@ -108,11 +108,11 @@ class AlvoController extends Controller
                 $alvo->save();
             }
             $message = 'Conteúdo original atualizado';
-            Log::channel('jobs')->info($message);
+            // Log::channel('jobs')->info($message);
             return response()->json($message, 200);
         } catch (Exception $e) {
             $erro = 'ERRO - atualizaConteudoOriginal: ' . $e->getMessage();
-            Log::channel('jobs')->error($erro);
+            // Log::channel('jobs')->error($erro);
             return response()->json($erro, 200);
         }
     }
