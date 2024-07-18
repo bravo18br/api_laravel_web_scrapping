@@ -3,11 +3,17 @@ info:
   title: Monitora Sites API
   description: https://github.com/bravo18br/api_laravel_web_scrapping
   version: 1.0.0
+tags:
+  - name: Usuários
+    description: Operações relacionadas a usuários
+  - name: WhatsApp
+    description: Operações relacionadas ao WhatsApp
+
 paths:
   /users:
     get:
       tags:
-        - Usuários  # Nome do grupo
+        - Usuários
       summary: Lista todos os usuários
       responses:
         '200':
@@ -18,6 +24,58 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/User'
+
+  /api/wpp/getQRCodeBIN:
+    get:
+      tags:
+        - WhatsApp
+      summary: Obtém o QR Code em formato BIN
+      responses:
+        '200':
+          description: QR Code em formato BIN
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  qrcode:
+                    type: string
+                    example: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA..."
+
+  /api/wpp/getQRCodePNG:
+    get:
+      tags:
+        - WhatsApp
+      summary: Obtém o QR Code em formato PNG
+      responses:
+        '200':
+          description: QR Code em formato PNG
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+
+  /api/wpp/getStatusWPP:
+    get:
+      tags:
+        - WhatsApp
+      summary: Obtém o status do WhatsApp
+      responses:
+        '200':
+          description: Status do WhatsApp
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: CONNECTED
+                  ERRO:
+                    type: string
+                    example: "Erro function statusWPP: 500"
+
 components:
   schemas:
     User:
