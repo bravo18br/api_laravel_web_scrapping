@@ -113,18 +113,18 @@ class AlvoController extends Controller
     *     @OA\Parameter(
     *         name="id",
     *         in="path",
-    *         required=true,
-    *         @OA\Schema(type="integer")
-    *     ),
-    *     @OA\Response(
-    *         response=200,
-    *         description="Formulário de edição",
-    *         @OA\JsonContent(ref="#/components/schemas/Alvo")
-    *     ),
-    *     @OA\Response(
-    *         response=404,
-    *         description="Alvo não encontrado"
-    *     )
+   *         required=true,
+   *         @OA\Schema(type="integer")
+   *     ),
+   *     @OA\Response(
+   *         response=200,
+   *         description="Formulário de edição",
+   *         @OA\JsonContent(ref="#/components/schemas/Alvo")
+   *     ),
+   *     @OA\Response(
+   *         response=404,
+   *         description="Alvo não encontrado"
+   *     )
     */
     public function edit(Alvo $alvo)
     {
@@ -223,6 +223,7 @@ class AlvoController extends Controller
      *         response=404,
      *         description="Alvo não encontrado"
      *     )
+     * )
      */
     public function geraConteudo(Alvo $alvo)
     {
