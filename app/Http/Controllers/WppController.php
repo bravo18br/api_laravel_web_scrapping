@@ -101,6 +101,11 @@ class WppController extends Controller
         }
     }
 
+    public function getQRCodeBIN()
+    {
+        return response()->json($this->geraQRCodeWPP());
+    }
+
     private function geraQRCodeWPP()
     {
         try {

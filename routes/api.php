@@ -10,3 +10,4 @@ Route::apiResource('/alvo', AlvoController::class);
 
 Route::get('/wpp/getStatusWPP', [WppController::class, 'getStatusWPP']);
 Route::get('/wpp/getQRCodePNG', [WppController::class, 'getQRCodePNG']);
+Route::get('/wpp/getQRCodeBIN', [WppController::class, 'getQRCodeBIN']);
