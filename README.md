@@ -7,8 +7,14 @@ Este projeto é uma aplicação Laravel que monitora sites e envia notificaçõe
 ### 1. Copiar todos os arquivos para uma pasta no servidor Docker
 - Faça um clone do projeto para uma pasta no servidor Docker:
   ```sh
-  gh repo clone bravo18br/docker_api_laravel_web_scrapping chris_api_laravel_web_scrapping
+  gh repo clone bravo18br/api_laravel_web_scrapping chris_api_laravel_web_scrapping
   ```
+
+
+###REVISADO###
+
+
+
 
 ### 2. Editar o `.env`
 - Renomeie o arquivo `.env.example` para `.env` na pasta do projeto.

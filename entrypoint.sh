@@ -4,18 +4,6 @@ set -e #exit on error
 # Carrega as variáveis de ambiente do arquivo .env
 source /root/.env
 
-# Verifica se GITHUB_TOKEN está definido
-if [ -z "$GITHUB_TOKEN" ]; then
-  echo "Erro: GITHUB_TOKEN não está definido"
-  exit 1
-fi
-
-# Login no GitHub usando o token
-echo $GITHUB_TOKEN | gh auth login --with-token
-
-# Clona o repositório no diretório /var/www/html
-gh repo clone bravo18br/api_laravel_web_scrapping /var/www/html
-
 # Move o arquivo .env para o diretório clonado
 mv /root/.env /var/www/html/.env
 
@@ -52,7 +40,7 @@ php artisan config:clear
 php artisan key:generate --force
 
 # Reiniciar o cron
-service cron restart
+# service cron restart
 
 # Inicia o worker do Laravel em segundo plano
 php artisan queue:work &

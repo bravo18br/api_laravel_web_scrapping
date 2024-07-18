@@ -14,7 +14,7 @@ services:
     ports:
       - "8077:80"
     volumes:
-      - ./app:/var/www/html
+      - ./:/var/www/html
       - ./apache.conf:/etc/apache2/sites-available/000-default.conf
     networks:
       - chris_api_laravel_web_scrapping
