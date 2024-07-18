@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -121,6 +122,11 @@ class WppController extends Controller
         } catch (Exception $e) {
             return ['ERRO' => "Erro function geraQRCodeWPP: " . $e->getMessage()];
         }
+    }
+
+    public function getStatusWPP()
+    {
+        return response()->json($this->statusWPP());
     }
 
     public function statusWPP()
