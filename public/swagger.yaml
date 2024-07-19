@@ -2,10 +2,10 @@ openapi: 3.0.0
 info:
   title: Monitora Sites API
   description: >
-    API para monitoramento de sites. Para mais detalhes, visite o [repositório do GitHub](https://github.com/bravo18br/api_laravel_web_scrapping).
+    API para monitoramento de sites. 
   version: 1.0.0
 externalDocs:
-  description: GitHub Repository
+  description: https://github.com/bravo18br/api_laravel_web_scrapping
   url: https://github.com/bravo18br/api_laravel_web_scrapping
 tags:
   - name: Alvos
