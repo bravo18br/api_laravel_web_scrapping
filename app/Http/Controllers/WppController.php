@@ -112,7 +112,7 @@ class WppController extends Controller
             return response()->json($retorno, 500);
         } else {
             $retorno = [
-                'qrcode' => 'data:image/png;base64,' . $this->geraQRCodeWPP(),
+                'qrcode' => $this->geraQRCodeWPP(),
                 'status' => 'Sucesso'
             ];
             return response()->json($retorno, 200);
