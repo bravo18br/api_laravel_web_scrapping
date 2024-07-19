@@ -4,17 +4,17 @@ info:
   description: https://github.com/bravo18br/api_laravel_web_scrapping
   version: 1.0.0
 tags:
-  - name: Usuários
-    description: Operações relacionadas a usuários
-  - name: WhatsApp
+  - name: /api/alvo/
+    description: Operações relacionadas aos Alvos
+  - name: /api/wpp/
     description: Operações relacionadas ao WhatsApp
 
 paths:
-  /users:
+  /api/alvo/:
     get:
       tags:
-        - Usuários
-      summary: Lista todos os usuários
+        - /api/alvo/
+      summary: Lista todos os alvos
       responses:
         '200':
           description: Uma lista de usuários
@@ -28,7 +28,7 @@ paths:
   /api/wpp/getQRCodeBIN:
     get:
       tags:
-        - WhatsApp
+        - /api/wpp/
       summary: Obtém o QR Code em formato BIN
       responses:
         '200':
@@ -45,7 +45,7 @@ paths:
                     type: string
                     example: 'Sucesso'
         '500':
-          description: Retorna mensagem de erro em caso de falha
+          description: Retorna detalhes do erro em caso de falha
           content:
             application/json:
               schema:
@@ -60,16 +60,23 @@ paths:
   /api/wpp/getQRCodePNG:
     get:
       tags:
-        - WhatsApp
+        - /api/wpp/
       summary: Obtém o QR Code em formato PNG para download
       responses:
         '200':
-          description: QR Code em formato PNG para download
+          description: Inicia download do .PNG em caso de sucesso
           content:
             image/png:
               schema:
                 type: Deve iniciar o download de um qrcode.png
                 format: PNG
+        '500':
+          description: Retorna um json com mensagem de erro em caso de falha
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 'QRCode em PNG não gerado, falha no servidor.'
 
   /api/wpp/getStatusWPP:
     get:
