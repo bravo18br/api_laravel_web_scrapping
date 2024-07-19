@@ -87,7 +87,7 @@ class WppController extends Controller
             $base64Image = str_replace(' ', '+', $base64Image);
             $imageData = base64_decode($base64Image);
 
-            $filePath = storage_path('app/public/qrcode.png');
+            $filePath = storage_path('public/qrcode.png');
             $directory = dirname($filePath);
 
             if (!file_exists($directory)) {
