@@ -67,7 +67,7 @@ class WppController extends Controller
 
     public function getQRCodePNG()
     {
-        if ($this->geraQRCodePNG()) {
+        if (!$this->geraQRCodePNG()) {
             return response()->json('QRCode em PNG não gerado, falha no servidor.', 500);
         } else {
             return response()->download($this->geraQRCodePNG(), 200);
@@ -98,7 +98,6 @@ class WppController extends Controller
                 Log::channel('integrado')->error('Failed to write QR code image to ' . $filePath);
                 return null;
             }
-            Log::channel('integrado')->info('Gerado qrcode.png em ' . $filePath);
             return $filePath;
         } catch (Exception $e) {
             Log::channel('integrado')->error('Error saving QR code image: ' . $e->getMessage());
