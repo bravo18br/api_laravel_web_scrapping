@@ -39,6 +39,7 @@ services:
       - "8074:8080"
     volumes:
       - ./config.json:/usr/src/wpp-server/config.json
+      - ./create-config.js:/usr/src/wpp-server/node_modules/@wppconnect-team/wppconnect/dist/config/create-config.js
     cpus: "1.0"
     mem_limit: 1024m
     healthcheck:
