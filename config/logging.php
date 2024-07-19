@@ -127,9 +127,9 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
         
-        'jobs' => [
+        'integrado' => [
             'driver' => 'single',
-            'path' => storage_path('logs/jobs.log'),
+            'path' => storage_path('logs/integrado.log'),
             'level' => 'debug',
         ],
     ],

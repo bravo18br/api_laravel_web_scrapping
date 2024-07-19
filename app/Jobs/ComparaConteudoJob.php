@@ -35,12 +35,12 @@ class ComparaConteudoJob implements ShouldQueue
                 $conteudoOriginal = $this->alvo->conteudo;
                 $conteudoAtual = $alvoController->geraConteudo($this->alvo);
                 if ($conteudoOriginal != $conteudoAtual) {
-                    Log::channel('jobs')->info($this->alvo->nome . ' Alterado.');
+                    Log::channel('integrado')->info($this->alvo->nome . ' Alterado.');
                     try {
                         $wppController = App::make(WppController::class);
                         $wppController->mensagemWhats($this->alvo);
                     } catch (Exception $e) {
-                        Log::channel('jobs')->error('ERRO - Notificação whats: ' . $e->getMessage());
+                        Log::channel('integrado')->error('ERRO - Notificação whats: ' . $e->getMessage());
                     }
                     try {
                         $wppController = App::make(WppController::class);
@@ -55,23 +55,23 @@ class ComparaConteudoJob implements ShouldQueue
                             $emailData['qrcodepath'] = $wppQRCodePNG;
                         }
                         Mail::to($emailData['destino'])->send(new GMailController($emailData));
-                        Log::channel('jobs')->info($emailData['nome'] . ' Email enviado.');
+                        Log::channel('integrado')->info($emailData['nome'] . ' Email enviado.');
                     } catch (Exception $e) {
-                        Log::channel('jobs')->error('ERRO - Email não enviado: ' . $e->getMessage());
+                        Log::channel('integrado')->error('ERRO - Email não enviado: ' . $e->getMessage());
                     }
                     $this->alvo['alerta'] = $this->alvo['alerta'] + 1;
                     $this->alvo->save();
                 } else {
-                    Log::channel('jobs')->info($this->alvo->nome . ' Permanece igual.');
+                    Log::channel('integrado')->info($this->alvo->nome . ' Permanece igual.');
                 }
             } else {
-                Log::channel('jobs')->info('Enviado ' . $this->alvo['alerta'] . ' alertas. Conteúdo do alvo atualizado.');
+                Log::channel('integrado')->info('Enviado ' . $this->alvo['alerta'] . ' alertas. Conteúdo do alvo atualizado.');
                 $this->alvo['conteudo'] = $alvoController->geraConteudo($this->alvo);
                 $this->alvo['alerta'] = 0;
                 $this->alvo->save();
             }
         } catch (Exception $e) {
-            Log::channel('jobs')->error('ERRO - ComparaConteudoJob: ' . $e->getMessage());
+            Log::channel('integrado')->error('ERRO - ComparaConteudoJob: ' . $e->getMessage());
         }
         sleep(1);
     }

@@ -26,7 +26,7 @@ class WppController extends Controller
                 return $this->sendMessageWPP('Site ' . $alvo->nome . ' alterado.' . PHP_EOL . 'URL: ' . $alvo->url);
             default:
                 $mensagem = $statusWPP['ERRO'];
-                Log::channel('jobs')->error($mensagem);
+                Log::channel('integrado')->error($mensagem);
                 return $mensagem;
         }
     }
@@ -51,16 +51,16 @@ class WppController extends Controller
             ])->withBody(json_encode($body), 'application/json')->post($url);
 
             if ($response->successful()) {
-                Log::channel('jobs')->info($mensagem . ' - enviada');
+                Log::channel('integrado')->info($mensagem . ' - enviada');
                 return 'SUCESSO';
             } else {
                 $erro = "Erro function sendMessageWPP: " . $response->status();
-                Log::channel('jobs')->error($erro);
+                Log::channel('integrado')->error($erro);
                 return $erro;
             }
         } catch (Exception $e) {
             $erro = "Erro function sendMessageWPP: " . $e->getMessage();
-            Log::channel('jobs')->error($erro);
+            Log::channel('integrado')->error($erro);
             return $erro;
         }
     }
@@ -79,7 +79,7 @@ class WppController extends Controller
         try {
             $base64Data = $this->geraQRCodeWPP();
             if (isset($base64Data['ERRO'])) {
-                Log::channel('jobs')->error('Error generating QR code: ' . $base64Data['ERRO']);
+                Log::channel('integrado')->error('Error generating QR code: ' . $base64Data['ERRO']);
                 return null;
             }
 
@@ -95,12 +95,12 @@ class WppController extends Controller
             }
 
             if (file_put_contents($filePath, $imageData) === false) {
-                Log::channel('jobs')->error('Failed to write QR code image to ' . $filePath);
+                Log::channel('integrado')->error('Failed to write QR code image to ' . $filePath);
                 return null;
             }
             return $filePath;
         } catch (Exception $e) {
-            Log::channel('jobs')->error('Error saving QR code image: ' . $e->getMessage());
+            Log::channel('integrado')->error('Error saving QR code image: ' . $e->getMessage());
             return null;
         }
     }
@@ -213,12 +213,12 @@ class WppController extends Controller
                 return 'Bearer ' . $responseBody['token'];
             } else {
                 $erro = "Erro function gerar_bearerWPP: " . $response->status();
-                Log::channel('jobs')->error($erro . " | Corpo: " . $response->body());
+                Log::channel('integrado')->error($erro . " | Corpo: " . $response->body());
                 return $erro;
             }
         } catch (Exception $e) {
             $erro = "Erro function gerar_bearerWPP: " . $e->getMessage();
-            Log::channel('jobs')->error($erro);
+            Log::channel('integrado')->error($erro);
             return $erro;
         }
     }
