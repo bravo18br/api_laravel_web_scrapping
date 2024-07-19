@@ -83,7 +83,7 @@ class WppController extends Controller
         if (!$this->geraQRCodePNG()) {
             return response()->json('QRCode em PNG não gerado, falha no servidor.', 500);
         } else {
-            return response()->download($this->geraQRCodePNG(), 200);
+            return response()->download($this->geraQRCodePNG())->header('Content-Type', 'image/png');
         }
     }
 
