@@ -32,6 +32,10 @@ class ComparaConteudoJob implements ShouldQueue
         try {
             $alvoController = new AlvoController;
             if ($this->alvo['alerta'] < 3) {
+                if($this->alvo->conteudo==null){
+                    $this->alvo->conteudo = $alvoController->geraConteudo($this->alvo);
+                    $this->alvo->save();
+                }
                 $conteudoOriginal = $this->alvo->conteudo;
                 $conteudoAtual = $alvoController->geraConteudo($this->alvo);
                 if ($conteudoOriginal != $conteudoAtual) {
