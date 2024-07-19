@@ -31,6 +31,19 @@ class WppController extends Controller
         }
     }
 
+    public function mensagemTeste()
+    {
+        $mensagem = 'Teste WPP Connect Monitora Sites';
+        $retorno = $this->sendMessageWPP($mensagem);
+        if ($retorno == 'SUCESSO') {
+            Log::channel('integrado')->info('Mensagem (' . $mensagem . ') enviada');
+            return response()->json('Mensagem (' . $mensagem . ') enviada', 200);
+        } else {
+            Log::channel('integrado')->error('Mensagem (' . $mensagem . ') não enviada');
+            return response()->json('Mensagem (' . $mensagem . ') não enviada', 500);
+        }
+    }
+
     private function sendMessageWPP($mensagem)
     {
         try {

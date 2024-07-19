@@ -96,6 +96,26 @@ paths:
                   status:
                     type: string
                     example: Erro function statusWPP...
+  /api/wpp/mensagemTeste:
+    get:
+      tags:
+        - WPP Connect
+      summary: Envia uma mensagem de teste via WhatsApp
+      responses:
+        '200':
+          description: Mensagem de teste enviada com sucesso
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 'Mensagem (Teste WPP Connect Monitora Sites) enviada'
+        '500':
+          description: Erro ao enviar a mensagem de teste
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 'Mensagem (Teste WPP Connect Monitora Sites) não enviada'
   /:
     get:
       tags:
