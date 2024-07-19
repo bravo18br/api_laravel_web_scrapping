@@ -126,12 +126,11 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
-        
+
         'integrado' => [
             'driver' => 'single',
             'path' => storage_path('logs/integrado.log'),
             'level' => 'debug',
         ],
     ],
-
 ];

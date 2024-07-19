@@ -109,11 +109,12 @@ class AlvoController extends Controller
             }
             $message = 'Conteúdo original atualizado';
             Log::channel('integrado')->info($message);
+            dd(storage_path('logs/integrado.log'));
             return response()->json($message, 200);
         } catch (Exception $e) {
             $erro = 'ERRO - atualizaConteudoOriginal: ' . $e->getMessage();
             Log::channel('integrado')->error($erro);
-            return response()->json($erro, 200);
+            return response()->json($erro, 500);
         }
     }
 }

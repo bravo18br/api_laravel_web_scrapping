@@ -41,10 +41,10 @@ Este projeto é uma aplicação Laravel que monitora sites e envia notificaçõe
   docker exec -it wppconnect /bin/sh
   ```
 
-### 6. Para verificar os logs
+### 6. Para verificar o log integrado
 - Execute o comando:
   ```sh
-  tail -f storage/logs/jobs.log
+  tail -f storage/logs/integrado.log
   ```
 
 ## Conseguir o GITHUB_TOKEN
