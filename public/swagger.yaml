@@ -8,23 +8,7 @@ tags:
     description: Operações relacionadas aos Alvos
   - name: /api/wpp/
     description: Operações relacionadas ao WhatsApp
-
 paths:
-  /api/alvo/:
-    get:
-      tags:
-        - /api/alvo/
-      summary: Lista todos os alvos
-      responses:
-        '200':
-          description: Uma lista de usuários
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
-
   /api/wpp/getQRCodeBIN:
     get:
       tags:
@@ -85,7 +69,7 @@ paths:
       summary: Obtém o status do WhatsApp
       responses:
         '200':
-          description: Status do WhatsApp
+          description: Status OK do WhatsApp
           content:
             application/json:
               schema:
@@ -94,10 +78,31 @@ paths:
                   status:
                     type: string
                     example: CONNECTED
-                  ERRO:
+        '500':
+          description: Status ERRO do WhatsApp
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
                     type: string
-                    example: "Erro function statusWPP: 500"
+                    example: Erro function statusWPP...
 
+#   /api/alvo/:
+#     get:
+#       tags:
+#         - /api/alvo/
+#       summary: Lista todos os alvos
+#       responses:
+#         '200':
+#           description: Uma lista de usuários
+#           content:
+#             application/json:
+#               schema:
+#                 type: array
+#                 items:
+#                   $ref: '#/components/schemas/User'
 # components:
 #   schemas:
 #     User:

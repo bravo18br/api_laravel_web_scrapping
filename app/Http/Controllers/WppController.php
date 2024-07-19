@@ -153,7 +153,15 @@ class WppController extends Controller
 
     public function getStatusWPP()
     {
-        return response()->json($this->statusWPP());
+        $statusWPP = $this->statusWPP();
+        if (isset($statusWPP['ERRO'])) {
+            $retorno = [
+                'status' => $statusWPP['ERRO']
+            ];
+            return response()->json($retorno, 500);
+        } else {
+            return response()->json($statusWPP, 200);
+        }
     }
 
     public function statusWPP()
