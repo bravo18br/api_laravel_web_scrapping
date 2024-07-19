@@ -32,7 +32,7 @@ paths:
       summary: Obtém o QR Code em formato BIN
       responses:
         '200':
-          description: QR Code em formato BIN
+          description: Retorna QR Code em formato BIN em caso de sucesso
           content:
             application/json:
               schema:
@@ -41,20 +41,35 @@ paths:
                   qrcode:
                     type: string
                     example: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA..."
-
+                  status:
+                    type: string
+                    example: 'Sucesso'
+        '500':
+          description: Retorna mensagem de erro em caso de falha
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  qrcode:
+                    type: string
+                    example: "Erro function geraQRCodeWPP..."
+                  status:
+                    type: string
+                    example: 'Falha'
   /api/wpp/getQRCodePNG:
     get:
       tags:
         - WhatsApp
-      summary: Obtém o QR Code em formato PNG
+      summary: Obtém o QR Code em formato PNG para download
       responses:
         '200':
-          description: QR Code em formato PNG
+          description: QR Code em formato PNG para download
           content:
             image/png:
               schema:
-                type: string
-                format: binary
+                type: Deve iniciar o download de um qrcode.png
+                format: PNG
 
   /api/wpp/getStatusWPP:
     get:
