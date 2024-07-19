@@ -10,25 +10,13 @@ Este projeto é uma aplicação Laravel que monitora sites e envia notificaçõe
   gh repo clone bravo18br/api_laravel_web_scrapping chris_api_laravel_web_scrapping
   ```
 
-
-###REVISADO###
-
-
-
-
 ### 2. Editar o `.env`
 - Renomeie o arquivo `.env.example` para `.env` na pasta do projeto.
 - Preencha a linha `GITHUB_TOKEN=<seu_github_token>`.
 - Edite as linhas `MAIL_USERNAME='usuario@gmail.com'` e `MAIL_PASSWORD='senha para aplicaçoes do Google'`.
 
-### 3. Criar a imagem
-- Navegue até a pasta do projeto no terminal.
-- Execute o comando:
-  ```sh
-  docker build -t chris_api_laravel_web_scrapping:alpha .
-  ```
 
-### 4. Rodar o Docker Compose
+### 3. Rodar o Docker Compose
 - Navegue até a pasta do projeto no terminal.
 - Execute o comando:
   ```sh
@@ -36,14 +24,15 @@ Este projeto é uma aplicação Laravel que monitora sites e envia notificaçõe
   ```
 - Sempre execute o "docker compose up -d" sem o hífen no comando, pois o "docker-compose" é antigo e gera vários problemas de conflitos de imagens/volumes.
 
-### 5. Caso precise parar a execução
+
+### 4. Caso precise parar a execução
 - Navegue até a pasta do projeto no terminal.
 - Execute o comando:
   ```sh
   docker compose down
   ```
 
-### 6. Caso precise acessar os containers em execução
+### 5. Caso precise acessar os containers em execução
 - Execute o comando:
   ```sh
   docker exec -it chris_api_laravel_web_scrapping /bin/bash
@@ -52,7 +41,7 @@ Este projeto é uma aplicação Laravel que monitora sites e envia notificaçõe
   docker exec -it wppconnect /bin/sh
   ```
 
-### 7. Para verificar os logs
+### 6. Para verificar os logs
 - Execute o comando:
   ```sh
   tail -f storage/logs/jobs.log
@@ -108,28 +97,14 @@ Para obter as credenciais do GMAIL, siga os passos abaixo:
 5. **Adicionar as credenciais ao arquivo `.env`:**
    - No arquivo `.env`, defina `MAIL_USERNAME='usuario@gmail.com'` e `MAIL_PASSWORD='senha_gerada'`.
 
-## Acessar a Aplicação
+## Acessar a Documentação Swagger da API
 
-1. **Acesse o navegador:**
-   - Abra o navegador e acesse:
+- Abra o navegador e acesse:
      ```plaintext
      http://localhost:8077
      ```
-   - Ou, se estiver acessando de outro dispositivo na mesma rede, substitua `localhost` pelo endereço IP do servidor.
+- Ou, se estiver acessando de outro dispositivo na mesma rede, substitua `localhost` pelo endereço IP do servidor.
      ```plaintext
      http://172.20.10.37:8077/
      ```
-
-## Documentação Swagger
-
-   - Para acessar a documentação Swagger da API, abra o navegador e acesse:
-      ```plaintext
-      http://localhost:8077/api/docs
-      ```
-   - Ou, se estiver acessando de outro dispositivo na mesma rede, substitua `localhost` pelo endereço IP do servidor.
-      ```plaintext
-      http://172.20.10.37:8077/api/docs
-      ```
-
-Seguindo essas instruções, você deverá ser capaz de rodar a aplicação Laravel usando Docker e Docker Compose e acessar a documentação da API gerada pelo Swagger.
 ```
