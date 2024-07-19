@@ -160,7 +160,10 @@ class WppController extends Controller
             ];
             return response()->json($retorno, 500);
         } else {
-            return response()->json($statusWPP, 200);
+            $retorno = [
+                'status' => $statusWPP['status']
+            ];
+            return response()->json($retorno, 200);
         }
     }
 
