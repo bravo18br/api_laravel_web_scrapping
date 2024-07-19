@@ -78,6 +78,7 @@ paths:
                   status:
                     type: string
                     example: CONNECTED
+                    example: CLOSED
         '500':
           description: Status ERRO do WhatsApp
           content:
