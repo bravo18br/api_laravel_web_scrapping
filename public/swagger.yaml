@@ -81,7 +81,7 @@ paths:
   /api/wpp/getStatusWPP:
     get:
       tags:
-        - WhatsApp
+        - /api/wpp/
       summary: Obtém o status do WhatsApp
       responses:
         '200':
@@ -98,14 +98,14 @@ paths:
                     type: string
                     example: "Erro function statusWPP: 500"
 
-components:
-  schemas:
-    User:
-      type: object
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        email:
-          type: string
+# components:
+#   schemas:
+#     User:
+#       type: object
+#       properties:
+#         id:
+#           type: integer
+#         name:
+#           type: string
+#         email:
+#           type: string
