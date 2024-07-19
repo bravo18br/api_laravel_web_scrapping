@@ -8,6 +8,8 @@ tags:
     description: Operações relacionadas aos Alvos
   - name: /api/wpp/
     description: Operações relacionadas ao WhatsApp
+  - name: Diversos
+    description: Rotas diversas
 paths:
   /api/wpp/getQRCodeBIN:
     get:
@@ -88,3 +90,13 @@ paths:
                   status:
                     type: string
                     example: Erro function statusWPP...
+  /:
+    get:
+      tags:
+        - Diversos
+      summary: Abre essa página de documentação
+      responses:
+        '200':
+          description: Documentação swagger da API
+          content:
+            html:
