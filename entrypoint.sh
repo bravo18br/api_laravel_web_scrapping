@@ -40,7 +40,7 @@ php artisan config:clear
 php artisan key:generate --force
 
 # Reiniciar o cron
-# service cron restart
+service cron restart
 
 # Inicia o worker do Laravel em segundo plano
 php artisan queue:work &
