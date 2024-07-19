@@ -4,9 +4,9 @@ info:
   description: https://github.com/bravo18br/api_laravel_web_scrapping
   version: 1.0.0
 tags:
-  - name: /api/alvo/
+  - name: Alvos
     description: Operações relacionadas aos Alvos
-  - name: /api/wpp/
+  - name: WPP Connect
     description: Operações relacionadas ao WhatsApp
   - name: Diversos
     description: Rotas diversas
@@ -14,7 +14,7 @@ paths:
   /api/wpp/getQRCodeBIN:
     get:
       tags:
-        - /api/wpp/
+        - WPP Connect
       summary: Obtém o QR Code em formato BIN
       responses:
         '200':
@@ -46,7 +46,7 @@ paths:
   /api/wpp/getQRCodePNG:
     get:
       tags:
-        - /api/wpp/
+        - WPP Connect
       summary: Obtém o QR Code em formato PNG para download
       responses:
         '200':
@@ -54,20 +54,22 @@ paths:
           content:
             image/png:
               schema:
-                type: Deve iniciar o download de um qrcode.png
-                format: PNG
+                type: string
+                format: binary
         '500':
           description: Retorna um json com mensagem de erro em caso de falha
           content:
             application/json:
               schema:
-                type: string
-                example: 'QRCode em PNG não gerado, falha no servidor.'
-
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'QRCode em PNG não gerado, falha no servidor.'
   /api/wpp/getStatusWPP:
     get:
       tags:
-        - /api/wpp/
+        - WPP Connect
       summary: Obtém o status do WhatsApp
       responses:
         '200':
@@ -99,4 +101,167 @@ paths:
         '200':
           description: Documentação swagger da API
           content:
-            html:
+            text/html:
+              schema:
+                type: string
+                example: '<html>...</html>'
+  /api/alvo:
+    get:
+      tags:
+        - Alvos
+      summary: Lista todos os alvos
+      responses:
+        '200':
+          description: Retorna uma lista de todos os alvos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Alvo'
+    post:
+      tags:
+        - Alvos
+      summary: Cria um novo alvo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Alvo'
+      responses:
+        '201':
+          description: Alvo criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Alvo'
+        '400':
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Erro de validação'
+  /api/alvo/atualizaConteudoAlvo:
+    get:
+      tags:
+        - Alvos
+      summary: Atualiza o conteúdo original dos alvos
+      responses:
+        '200':
+          description: Conteúdo original atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 'Conteúdo original atualizado'
+        '500':
+          description: Erro ao atualizar o conteúdo original
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 'ERRO - atualizaConteudoOriginal: ...'
+  /api/alvo/{alvo}:
+    get:
+      tags:
+        - Alvos
+      summary: Obtém um alvo específico
+      parameters:
+        - name: alvo
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Retorna os detalhes de um alvo específico
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Alvo'
+        '404':
+          description: Alvo não encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Alvo não encontrado'
+    put:
+      tags:
+        - Alvos
+      summary: Atualiza um alvo existente
+      parameters:
+        - name: alvo
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Alvo'
+      responses:
+        '200':
+          description: Alvo atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Alvo'
+        '400':
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Erro de validação'
+    delete:
+      tags:
+        - Alvos
+      summary: Deleta um alvo
+      parameters:
+        - name: alvo
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Alvo deletado com sucesso
+        '404':
+          description: Alvo não encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Alvo não encontrado'
+components:
+  schemas:
+    Alvo:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        url:
+          type: string
+        elemento:
+          type: string
+        conteudo:
+          type: string
