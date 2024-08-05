@@ -1,9 +1,12 @@
 <?php
 
+use Illuminate\Http\Middleware\HandleCors;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['cors'])->group(function () {
-    Route::get('/', function () {
-        return response()->view('welcome', [], 200);
-    });
+// Route::get('/', function () {
+//     return response()->view('welcome', [], 200);
+// })->middleware(HandleCors::class);
+
+Route::get('/', function () {
+    return response()->view('welcome', [], 200);
 });
