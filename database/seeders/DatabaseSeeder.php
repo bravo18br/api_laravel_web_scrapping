@@ -58,6 +58,11 @@ class DatabaseSeeder extends Seeder
                 'nome' => 'COREN',
                 'url' => 'https://www.quadrix.org.br/todos-os-concursos/em-andamento/corenpr_2024.aspx',
                 'elemento' => 'taba-publicacoes',
+            ],
+            [
+                'nome' => 'Dataprev',
+                'url' => 'https://conhecimento.fgv.br/concursos/dataprev24',
+                'elemento' => 'field--name-field-concurso-arquivos',
             ]
         ];
 
